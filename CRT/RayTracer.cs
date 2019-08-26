@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 
@@ -11,56 +12,32 @@ namespace CRT
     {
         public int height;
         public int width;
-        public int superSample;
-        public Scene scene;
-        public Color[,] frameBuffer;
 
-        public Lightsource light0;
-        public Sphere sphere0;
+        public Vector3[,] frameBuffer;
+        public List<Sphere> spheres;
+        public List<Light> lights;
 
-        public RayTracer(int height, int width, int superSample)
+        public RayTracer(int height, int width)
         {
             this.height = height;
             this.width = width;
-            this.superSample = superSample > 1 ? superSample : 1;
 
-            scene = new Scene(new Color(64, 64, 64));
-            frameBuffer = new Color[height, width];
+            frameBuffer = new Vector3[height, width];
+            spheres = new List<Sphere>();
+            lights = new List<Light>();
 
-            light0 = new Lightsource(new Vec3(0, 0, 0), new Color(255, 255, 255));
+            spheres.Add(new Sphere(new Vector3(-3, 0, -16), 2, Material.ivory));
+            spheres.Add(new Sphere(new Vector3(-1, -1.5f, -12), 2, Material.glass));
+            spheres.Add(new Sphere(new Vector3(-1.5f, -0.5f, -18), 3, Material.redRubber));
+            spheres.Add(new Sphere(new Vector3(7, 5, -18), 4, Material.mirror));
 
-            sphere0 = generateSphere(new Vec3(250,  0, 0), 150, Color.red);
-            scene.add(generateSphere(new Vec3(250, 200, 0), 50, Color.green));
-            scene.add(generateSphere(new Vec3(250, 300, 0), 50, Color.blue));
-
-            scene.add(sphere0);
-            scene.add(light0);
+            lights.Add(new Light(new Vector3(-20, 20, 20), 1.5f));
+            lights.Add(new Light(new Vector3(30, 50, -25), 1.8f));
+            lights.Add(new Light(new Vector3(30, 20, 30), 1.7f));
         }
-
-        public Sphere generateSphere(Vec3 pos, double scale, Color color)
-        {
-            return new Sphere(new Vec3((double)height * (double)superSample * (pos.X / 500.0), (double)height * (double)superSample * (pos.Y / 500.0), (double)height * (double)superSample * (pos.Z / 500.0)), (double)height * (double)superSample * (scale / 500.0), color, Texture.SPECULAR);
-        }
-
         public void GenerateFrame()
         {
-            for (int i = 0; i < height; i++)
-            {
-                for (int j = 0; j < width; j++)
-                {
-                    Color c = scene.trace(i * superSample, j * superSample);
-
-                    for (int x = 0; x < superSample; x++)
-                    {
-                        for (int y = 1; y < superSample; y++)
-                        {
-                            c.mix_with(scene.trace(i * superSample + x, j * superSample + y));
-                        }
-                    }
-
-                    frameBuffer[i, j] = c;
-                }
-            }
+            RT.render(width, height, (float)(Math.PI / 3), new Vector3(0, 0, 0), ref frameBuffer, spheres, lights);
         }
 
         public Bitmap CreateBitmap(bool save, bool open)
@@ -72,7 +49,7 @@ namespace CRT
             {
                 for (int j = 0; j < width; j++)
                 {
-                    bitmap.SetPixel(i, j, System.Drawing.Color.FromArgb((int)frameBuffer[i, j].r, (int)frameBuffer[i, j].g, (int)frameBuffer[i, j].b));
+                    bitmap.SetPixel(i, j, Color.FromArgb((int)(frameBuffer[i, j].X * 255), (int)(frameBuffer[i, j].Y * 255), (int)(frameBuffer[i, j].Z) * 255));
                 }
             }
 
@@ -91,7 +68,7 @@ namespace CRT
             return bitmap;
         }
 
-        public void Draw(bool greyScale)
+        public void Draw()
         {
             GenerateFrame();
             Console.SetCursorPosition(0, 0);
@@ -111,14 +88,7 @@ namespace CRT
 
                     if ((xPos >= 0 && xPos < width) && (yPos >= 0 && yPos < height))
                     {
-                        if(greyScale)
-                        {
-                            toSet = Utils.FromColor(frameBuffer[xPos, yPos].GreyScale());
-                        }
-                        else
-                        {
-                            toSet = Utils.FromColor(frameBuffer[xPos, yPos]);
-                        }
+                        toSet = Utils.FromColor(frameBuffer[xPos, yPos]);
 
                         if (toSet != current)
                         {

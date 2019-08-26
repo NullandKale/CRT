@@ -16,7 +16,7 @@ namespace CRT
 
         public static void testBMP()
         {
-            RayTracer rayTracer = new RayTracer(500, 500, 1);
+            RayTracer rayTracer = new RayTracer(500, 500);
             rayTracer.CreateBitmap(true, true);
         }
 
@@ -25,19 +25,11 @@ namespace CRT
             height = Console.WindowHeight - 1;
             width = Console.WindowWidth;
 
-            RayTracer rayTracer = new RayTracer(height, width, superSample);
+            RayTracer rayTracer = new RayTracer(height, width);
 
-            int travel = 25;
-            bool direction = true;
             while(true)
             {
-                rayTracer.Draw(greyScale);
-                rayTracer.light0.position.X += direction ? 1 : -1;
-
-                if(Math.Abs(rayTracer.light0.position.X) > travel)
-                {
-                    direction = !direction;
-                }
+                rayTracer.Draw();
             }
         }
     }
