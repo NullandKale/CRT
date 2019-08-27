@@ -53,34 +53,28 @@ namespace CRT
 
         public bool rayIntersect(Vector3 orig, Vector3 dir, ref float t0)
         {
-            Vector3 L = center - orig;
+            Vector3 L = orig - center;
+            float radius2 = (radius * radius);
 
-            float tca = 0;
+            float a = Vector3.Dot(dir, dir);
+            float b = 2 * Vector3.Dot(dir, L);
+            float c = Vector3.Dot(L, L) - radius2;
+            float t1 = 0;
 
-            tca += L.X * dir.X;
-            tca += L.Y * dir.Y;
-            tca += L.Z * dir.Z;
-
-            //float tca = Vector3.Dot(dir, L);
-            float lDot = Vector3.Dot(L, L);
-            float d2 = lDot - (tca * tca);
-
-            if (d2 > radius * radius)
+            if(!Utils.SolveQuadradic(a, b, c, ref t0, ref t1))
             {
                 return false;
             }
 
-            float thc = (float)Math.Sqrt(radius * radius - d2);
-            t0 = tca - thc;
-            if(t0 < 0)
+            if (t0 < 0)
             {
                 //set t0 to t1
-                t0 = tca + thc;
-            }
+                t0 = t1;
 
-            if(t0 < 0)
-            {
-                return false;
+                if (t0 < 0)
+                {
+                    return false;
+                }
             }
 
             return true;

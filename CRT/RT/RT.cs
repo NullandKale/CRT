@@ -75,7 +75,7 @@ namespace CRT
 
             if(depth > 4 || !sceneIntersect(orig, dir, spheres, ref point, ref N, ref material))
             {
-                return new Vector3(0.2f, 0.7f, 0.8f);
+                return new Vector3(1f, 0.0f, 1f);
             }
 
             Vector3 reflectDir = Vector3.Normalize(reflect(dir, N));
@@ -93,7 +93,7 @@ namespace CRT
                 Vector3 lightDir = Vector3.Normalize(lights[i].position - point);
                 float lightDist = norm(lights[i].position - point);
 
-                Vector3 shadowOrig = (lightDir * N).LengthSquared() < 0 ? point - Vector3.Multiply(N, 1e-3f) : point - Vector3.Multiply(N, 1e-3f);
+                Vector3 shadowOrig = Vector3.Dot(lightDir, N) < 0 ? point - Vector3.Multiply(N, 1e-3f) : point - Vector3.Multiply(N, 1e-3f);
                 Vector3 shadowPt = new Vector3();
                 Vector3 shadowN = new Vector3();
                 Material shadowMat = new Material();
@@ -116,8 +116,10 @@ namespace CRT
             {
                 for (int i = 0; i < width; i++)
                 {
-                    Vector3 dir = new Vector3((i + 0.5f) - width / 2f, -(j + 0.5f) - height / 2f, -height/(2f * (float)Math.Tan(fov / 2)));
-                    frame[i, j] = castRay(cameraOrig, Vector3.Normalize(dir), spheres, lights);
+                    float dirx = (i + 0.5f) - width / 2f;
+                    float diry = -(j + 0.5f) + height / 2f;
+                    float dirz = -height / (2f * (float)Math.Tan(fov / 2));
+                    frame[i, j] = castRay(cameraOrig, Vector3.Normalize(new Vector3(dirx, diry, dirz)), spheres, lights);
                 }
             }
         }

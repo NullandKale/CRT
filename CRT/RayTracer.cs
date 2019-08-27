@@ -49,7 +49,18 @@ namespace CRT
             {
                 for (int j = 0; j < width; j++)
                 {
-                    bitmap.SetPixel(i, j, Color.FromArgb((int)(frameBuffer[i, j].X * 255), (int)(frameBuffer[i, j].Y * 255), (int)(frameBuffer[i, j].Z) * 255));
+                    Vector3 c = frameBuffer[i, j];
+                    float max = Math.Max(c.X, Math.Max(c.Y, c.Z));
+                    if(max > 1)
+                    {
+                        c = c * (1f / max);
+                    }
+
+                    int r = c.X > 1 ? 255 : (int)(c.X * 255);
+                    int g = c.Y > 1 ? 255 : (int)(c.Y * 255);
+                    int b = c.Z > 1 ? 255 : (int)(c.Z * 255);
+
+                    bitmap.SetPixel(i, j, Color.FromArgb(r, b, g));
                 }
             }
 
