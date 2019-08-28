@@ -9,7 +9,9 @@ namespace CRT
     {
         public static Vector3 reflect(Vector3 I, Vector3 N)
         {
-            return I - N * 2f * (I * N);
+            float d = Vector3.Dot(I, N);
+            Vector3 mult = (N * 2f);
+            return I - (mult * d);
         }
 
         public static float norm(Vector3 vector3)
@@ -29,7 +31,10 @@ namespace CRT
             float eta = eta_i / eta_t;
             float k = 1 - eta * eta * (1 - cosi * cosi);
 
-            return k < 0 ? new Vector3(1, 0, 0) : (I * eta) + N * (eta * cosi - (float)Math.Sqrt(k));
+            Vector3 ifTrue = new Vector3(1, 0, 0);
+            Vector3 ifFalse = (I * eta) + N * (eta * cosi - (float)Math.Sqrt(k));
+
+            return k < 0 ? ifTrue : ifFalse;
         }
 
         public static bool sceneIntersect(Vector3 orig, Vector3 dir, List<Sphere> spheres, ref Vector3 hit, ref Vector3 N, ref Material material)
@@ -49,18 +54,25 @@ namespace CRT
             }
 
             float checkerboard_dist = float.MaxValue;
-            int floorHeight = -4;
+            int floorHeight = 4;
+
             if(Math.Abs(dir.Y) > 1e-3)
             {
-                float d = -(orig.Y - floorHeight) / dir.Y;
-                Vector3 pt = orig + dir * d;
+                float d = -(orig.Y + floorHeight) / dir.Y;
+                Vector3 pt = orig + (dir * d);
                 if(d > 0 && Math.Abs(pt.X) < 10 && pt.Z < -10 && pt.Z > -30 && d < spheresDist)
                 {
                     checkerboard_dist = d;
                     hit = pt;
                     N = new Vector3(0, 1, 0);
 
-                    material.diffuseColor = (((int)(.5 * hit.X + 1000) + ((int)(.5 * hit.Z))) & 1) == 1 ? new Vector3(0.3f, 0.3f, 0.3f) : new Vector3(0.3f, 0.2f, 0.1f);
+                    Vector3 ifTrue = new Vector3(0.3f, 0.3f, 0.3f);
+                    Vector3 ifFalse = new Vector3(0.3f, 0.2f, 0.1f);
+
+                    float x = (.5f * hit.X + 1000);
+                    float z = (.5f * hit.Z);
+
+                    material.diffuseColor = ((int)(x + z) & 1) == 1 ? ifTrue : ifFalse;
                 }
             }
 
@@ -75,15 +87,16 @@ namespace CRT
 
             if(depth > 4 || !sceneIntersect(orig, dir, spheres, ref point, ref N, ref material))
             {
-                return new Vector3(1f, 0.0f, 1f);
+                return new Vector3(0.2f, 0.7f, 0.8f);
             }
 
-            Vector3 reflectDir = Vector3.Normalize(reflect(dir, N));
             Vector3 refractDir = Vector3.Normalize(refract(dir, N, material.refractiveIndex));
-            Vector3 reflectOrig = (reflectDir * N).LengthSquared() < 0 ? point - Vector3.Multiply(N, 1e-3f) : point + Vector3.Multiply(N, 1e-3f); // Length Squared Might be wrong
-            Vector3 refractOrig = (refractDir * N).LengthSquared() < 0 ? point - Vector3.Multiply(N, 1e-3f) : point + Vector3.Multiply(N, 1e-3f); // Length Squared Might be wrong
-            Vector3 reflectColor = castRay(reflectOrig, reflectDir, spheres, lights, depth + 1);
+            Vector3 refractOrig = Vector3.Dot(refractDir, N) < 0 ? point - Vector3.Multiply(N, 1e-3f) : point + Vector3.Multiply(N, 1e-3f); // Length Squared Might be wrong
             Vector3 refractColor = castRay(refractOrig, refractDir, spheres, lights, depth + 1);
+
+            Vector3 reflectDir = Vector3.Normalize(reflect(dir, N));
+            Vector3 reflectOrig = Vector3.Dot(reflectDir, N) < 0 ? point - Vector3.Multiply(N, 1e-3f) : point + Vector3.Multiply(N, 1e-3f); // Length Squared Might be wrong
+            Vector3 reflectColor = castRay(reflectOrig, reflectDir, spheres, lights, depth + 1);
 
             float diffuseLightIntensity = 0;
             float specularLightIntensity = 0;
@@ -93,7 +106,7 @@ namespace CRT
                 Vector3 lightDir = Vector3.Normalize(lights[i].position - point);
                 float lightDist = norm(lights[i].position - point);
 
-                Vector3 shadowOrig = Vector3.Dot(lightDir, N) < 0 ? point - Vector3.Multiply(N, 1e-3f) : point - Vector3.Multiply(N, 1e-3f);
+                Vector3 shadowOrig = Vector3.Dot(lightDir, N) < 0 ? point - Vector3.Multiply(N, 1e-3f) : point + Vector3.Multiply(N, 1e-3f);
                 Vector3 shadowPt = new Vector3();
                 Vector3 shadowN = new Vector3();
                 Material shadowMat = new Material();
@@ -104,10 +117,18 @@ namespace CRT
                 }
 
                 diffuseLightIntensity += lights[i].intensity * Math.Max(0f, Vector3.Dot(lightDir, N));
-                specularLightIntensity += (float)Math.Pow(Math.Max(0f, Vector3.Dot(-reflect(-lightDir, N), dir)), material.specularExponent) * lights[i].intensity;
+                float s = Math.Max(0f, Vector3.Dot(-reflect(-lightDir, N), dir));
+                float spli = (float)Math.Pow(s, material.specularExponent) * lights[i].intensity;
+                specularLightIntensity += spli;
             }
 
-            return material.diffuseColor * diffuseLightIntensity * material.albedo.W + new Vector3(1, 1, 1) * specularLightIntensity * material.albedo.X + reflectColor * material.albedo.Y + refractColor * material.albedo.Z;
+            Vector3 w = material.diffuseColor * diffuseLightIntensity * material.albedo.X;
+            Vector3 x = new Vector3(1, 1, 1) * specularLightIntensity * material.albedo.Y;
+            Vector3 y = reflectColor * material.albedo.Z;
+            Vector3 z = refractColor * material.albedo.W;
+            Vector3 toReturn = w + x + y + z;
+
+            return toReturn;
         }
 
         public static void render(int width, int height, float fov, Vector3 cameraOrig, ref Vector3[,] frame, List<Sphere> spheres, List<Light> lights)

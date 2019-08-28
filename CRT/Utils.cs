@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
 using System.Text;
 
@@ -20,6 +21,21 @@ namespace CRT
             index |= (g > 64) ? 1 : 0; // Blue bit
 
             return (ConsoleColor)index;
+        }
+
+        public static Color toRGB(Vector3 c)
+        {
+            float max = Math.Max(c.X, Math.Max(c.Y, c.Z));
+            if (max > 1)
+            {
+                c = c * (1f / max);
+            }
+
+            int r = (int)(Math.Max(0.0f, Math.Min(1, c.X)) * 255.0);
+            int g = (int)(Math.Max(0.0f, Math.Min(1, c.Y)) * 255.0);
+            int b = (int)(Math.Max(0.0f, Math.Min(1, c.Z)) * 255.0);
+
+            return Color.FromArgb(r, g, b);
         }
 
         public static bool SolveQuadradic(float a, float b, float c, ref float x0, ref float x1)
