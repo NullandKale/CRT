@@ -34,21 +34,20 @@ namespace CRT
             world = new HitableList();
             if (consoleAspectFix)
             {
-                camera = new Camera(new Vec3(-2, 3, -2), new Vec3(1, 1, 1), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
+                camera = new Camera(new Vec3(0, 2, 0), new Vec3(1, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
             }
             else
             {
-                camera = new Camera(new Vec3(-2, 3, -2), new Vec3(1, 1, 1), new Vec3(0, 1, 0), fov, (double)width / (double)height);
+                camera = new Camera(new Vec3(0, 2, 0), new Vec3(1, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
             }
-            double R = Math.Cos(Math.PI/4);
 
-            //world.add(new Sphere(new Vec3(0,       0, -1),   0.5, new Lambertian(new Vec3(1, 0, 0))));
-            world.add(new Sphere(new Vec3(0, -1000.5, -1),  1000, new Metal(new Vec3(0, 0, 0), 1)));
-            //world.add(new Sphere(new Vec3(1,       0,  1),   0.5, new Metal(new Vec3(0.5, 0.5, 0.5), 1)));
+            world.add(new Sphere(new Vec3(0,       0, -1),   0.5, new Lambertian(new Vec3(1, 0, 0))));
+            world.add(new Sphere(new Vec3(0, -100000.5, -1),  100000, new Metal(new Vec3(0.25, 0.1, 0.15), 1)));
+            world.add(new Sphere(new Vec3(6,       2,  0),   4, new Metal(new Vec3(0.5, 0.5, 0.5), 1)));
 
-            for(int i = 0; i < 20; i++)
+            for(int i = 0; i < 10; i++)
             {
-                world.add(new Sphere(new Vec3(Utils.rand(0, 5), Utils.rand(0, 2.5), Utils.rand(0, 5)), Utils.rand(0.125, 1), new Lambertian(Utils.randomColor())));
+                world.add(new Sphere(new Vec3(Utils.rand(0, 2), Utils.rand(0, 3), Utils.rand(-2, 2)), Utils.rand(0.125, 0.75), new Lambertian(Utils.randomColor())));
             }
         }
         Vec3 color(Ray r, Hitable world, int depth)
@@ -72,7 +71,7 @@ namespace CRT
             {
                 Vec3 unitDirection = Vec3.unitVector(r.b);
                 double t = 0.5 * (unitDirection.y + 1.0);
-                return (1.0 - t) * new Vec3(0, 0, 0) + (t * new Vec3(0.5, 0.7, 1.0));
+                return (1.0 - t) * new Vec3(1, 1, 1) + (t * new Vec3(0.1, 0.1, 0.1));
             }
         }
         public void GenerateFrame()
@@ -155,10 +154,11 @@ namespace CRT
             });
         }
 
-        public Bitmap CreateBitmap(bool save, bool open, bool parallel)
+        public void update(bool parallel)
         {
-            Bitmap bitmap = new Bitmap(width, height);
-            if(parallel)
+            camera.update();
+
+            if (parallel)
             {
                 GenerateFrameParallel();
             }
@@ -166,6 +166,27 @@ namespace CRT
             {
                 GenerateFrame();
             }
+
+            if (Program.input.IsKeyRising(OpenTK.Input.Key.R))
+            {
+                world.hitables.Clear();
+
+                world.add(new Sphere(new Vec3(0, 0, -1), 0.5, new Lambertian(new Vec3(1, 0, 0))));
+                world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new Metal(new Vec3(0.25, 0.1, 0.15), 1)));
+                world.add(new Sphere(new Vec3(6, 2, 0), 2, new Metal(new Vec3(0.5, 0.5, 0.5), 1)));
+
+                for (int i = 0; i < 5; i++)
+                {
+                    world.add(new Sphere(new Vec3(Utils.rand(0, 2), Utils.rand(0, 3), Utils.rand(-2, 2)), Utils.rand(0.125, 0.5), new Lambertian(Utils.randomColor())));
+                }
+            }
+        }
+
+        public Bitmap CreateBitmap(bool save, bool open, bool parallel)
+        {
+            Bitmap bitmap = new Bitmap(width, height);
+
+            update(parallel);
 
             for (int x = 0; x < width; x++)
             {
@@ -192,14 +213,7 @@ namespace CRT
 
         public void Draw(bool parallel, bool greyScale)
         {
-            if (parallel)
-            {
-                GenerateFrameParallel();
-            }
-            else
-            {
-                GenerateFrame();
-            }
+            update(parallel);
 
             Console.SetCursorPosition(0, 0);
             ConsoleColor current = Console.BackgroundColor;
