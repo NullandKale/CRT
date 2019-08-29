@@ -1,74 +1,127 @@
-﻿using System;
+﻿using CRT.IOW;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 
 namespace CRT
 {
     class Utils
     {
-        public static ConsoleColor FromColor(Vector3 c)
+        public static ConsoleColor FromColor(Vec3 c)
         {
-            int r = (int)(c.X * 255.0);
-            int g = (int)(c.Y * 255.0);
-            int b = (int)(c.Z * 255.0);
+            double max = Math.Max(c.x, Math.Max(c.y, c.z));
+            if (max > 1)
+            {
+                c = c * (1.0 / max);
+            }
+
+            int r = (int)(Math.Max(0.0, Math.Min(1, c.r())) * 255.0);
+            int g = (int)(Math.Max(0.0, Math.Min(1, c.g())) * 255.0);
+            int b = (int)(Math.Max(0.0, Math.Min(1, c.b())) * 255.0);
 
             int index = (r > 128 | g > 128 | b > 128) ? 8 : 0; // Bright bit
 
             index |= (r > 64) ? 4 : 0; // Red bit
-            index |= (b > 64) ? 2 : 0; // Green bit
-            index |= (g > 64) ? 1 : 0; // Blue bit
+            index |= (g > 64) ? 2 : 0; // Green bit
+            index |= (b > 64) ? 1 : 0; // Blue bit
 
             return (ConsoleColor)index;
         }
 
-        public static Color toRGB(Vector3 c)
+        public static Vec3 greyScale(Vec3 v)
         {
-            float max = Math.Max(c.X, Math.Max(c.Y, c.Z));
+            double avg = (v.x + v.y + v.z) / 3.0;
+
+            return new Vec3(avg, avg, avg);
+        }
+
+        public static Color toRGB(Vec3 c)
+        {
+            double max = Math.Max(c.x, Math.Max(c.y, c.z));
             if (max > 1)
             {
-                c = c * (1f / max);
+                c = c * (1.0 / max);
             }
 
-            int r = (int)(Math.Max(0.0f, Math.Min(1, c.X)) * 255.0);
-            int g = (int)(Math.Max(0.0f, Math.Min(1, c.Y)) * 255.0);
-            int b = (int)(Math.Max(0.0f, Math.Min(1, c.Z)) * 255.0);
+            int r = (int)(Math.Max(0.0, Math.Min(1, c.r())) * 255.0);
+            int g = (int)(Math.Max(0.0, Math.Min(1, c.g())) * 255.0);
+            int b = (int)(Math.Max(0.0, Math.Min(1, c.b())) * 255.0);
 
             return Color.FromArgb(r, g, b);
         }
 
-        public static bool SolveQuadradic(float a, float b, float c, ref float x0, ref float x1)
+        public static Vec3 randomColor()
         {
-            float discr = b * b - 4 * a * c;
+            int val = rng.Next(0, 14);
 
-            if (discr < 0)
+            switch (val)
             {
-                return false;
-            }
-            else if (discr == 0)
-            {
-                x0 = 0.5f * b / a;
-                x1 = x0;
-            }
-            else
-            {
-                float q = (b > 0) ?
-                    (float)(-0.5f * (b + Math.Sqrt(discr))): 
-                    (float)(-0.5f * (b - Math.Sqrt(discr)));
-                x0 = q / a;
-                x1 = c / q;
+                case 0:
+                    return new Vec3(0, 0, 0);
+                case 1:
+                    return new Vec3(0, 0, 1);
+                case 2:
+                    return new Vec3(0, 1, 0);
+                case 3:
+                    return new Vec3(0, 1, 1);
+                case 4:
+                    return new Vec3(1, 0, 0);
+                case 5:
+                    return new Vec3(1, 0, 1);
+                case 6:
+                    return new Vec3(1, 1, 0);
+                case 7:
+                    return new Vec3(1, 1, 1);
+                case 8:
+                    return new Vec3(0, 0, 0.5);
+                case 9:
+                    return new Vec3(0, 0.5, 0);
+                case 10:
+                    return new Vec3(0, 0.5, 0.5);
+                case 11:
+                    return new Vec3(0.5, 0, 0);
+                case 12:
+                    return new Vec3(0.5, 0, 0.5);
+                case 13:
+                    return new Vec3(0.5, 0.5, 0);
+                case 14:
+                    return new Vec3(0.5, 0.5, 0.5);
             }
 
-            if (x0 > x1)
-            {
-                float x1temp = x0;
-                x0 = x1;
-                x1 = x1temp;
-            }
-
-            return true;
+            return new Vec3(0, 0, 0);
         }
 
+        private static Random rng = new Random();
+
+        public static double rand()
+        {
+            return rng.NextDouble();
+        }
+
+        public static double rand(double min, double max)
+        {
+            return (rng.NextDouble() * (max - min) + min);
+        }
+
+        private static ThreadLocal<Vec3> p = new ThreadLocal<Vec3>();
+        private static ThreadLocal<Random> rngs = new ThreadLocal<Random>();
+        public static Vec3 randomInUnitSphere()
+        {
+            if (!rngs.IsValueCreated)
+            {
+                rngs.Value = new Random();
+            }
+
+            do
+            {
+                p.Value = (2.0 * new Vec3(rngs.Value.NextDouble(), rngs.Value.NextDouble(), rngs.Value.NextDouble())) - new Vec3(1, 1, 1);
+            }
+            while (p.Value.lengthSquared() >= 1.0);
+
+            return p.Value;
+        }
     }
 }
