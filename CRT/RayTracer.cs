@@ -34,22 +34,23 @@ namespace CRT
             world = new HitableList();
             if (consoleAspectFix)
             {
-                camera = new Camera(new Vec3(0, 2, 0), new Vec3(1, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
+                camera = new Camera(new Vec3(-1, 2, 0), new Vec3(0, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
             }
             else
             {
-                camera = new Camera(new Vec3(0, 2, 0), new Vec3(1, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
+                camera = new Camera(new Vec3(-1, 2, 0), new Vec3(0, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
             }
 
             world.add(new Sphere(new Vec3(0,       0, -1),   0.5, new Lambertian(new Vec3(1, 0, 0))));
-            world.add(new Sphere(new Vec3(0, -100000.5, -1),  100000, new Metal(new Vec3(0.25, 0.1, 0.15), 1)));
+            world.add(new Sphere(new Vec3(0, -100000.5, -1),  100000, new Lambertian(new Vec3(0.25, 0.1, 0.15))));
             world.add(new Sphere(new Vec3(6,       2,  0),   4, new Metal(new Vec3(0.5, 0.5, 0.5), 1)));
 
-            for(int i = 0; i < 10; i++)
-            {
-                world.add(new Sphere(new Vec3(Utils.rand(0, 2), Utils.rand(0, 3), Utils.rand(-2, 2)), Utils.rand(0.125, 0.75), new Lambertian(Utils.randomColor())));
-            }
+            //for(int i = 0; i < 10; i++)
+            //{
+            //    world.add(new Sphere(new Vec3(Utils.rand(-5, 5), Utils.rand(0, 3), Utils.rand(-5, 5)), Utils.rand(0.5, 2), new Lambertian(Utils.randomColor())));
+            //}
         }
+
         Vec3 color(Ray r, Hitable world, int depth)
         {
             HitRecord rec = new HitRecord();
@@ -64,14 +65,15 @@ namespace CRT
                 }
                 else
                 {
-                    return new Vec3(0, 0, 0);
+                    return new Vec3(1, 1, 1);
                 }
             }
             else
             {
                 Vec3 unitDirection = Vec3.unitVector(r.b);
                 double t = 0.5 * (unitDirection.y + 1.0);
-                return (1.0 - t) * new Vec3(1, 1, 1) + (t * new Vec3(0.1, 0.1, 0.1));
+                Vec3 col = (1.0 - t) * new Vec3(1, 1, 1) + (t * new Vec3(0.1, 0.1, 0.1));
+                return col;
             }
         }
         public void GenerateFrame()
@@ -83,31 +85,23 @@ namespace CRT
                 for (int y = 0; y < height; y++)
                 {
                     Vec3 col = new Vec3();
-                    for(int s = 0; s < superSample; s++)
+                    double u;
+                    double v;
+                    Ray r;
+
+                    for (int s = 0; s < superSample; s++)
                     {
-                        double u;
-                        double v;
-                        Ray r;
-
-                        if (superSample > 1)
+                        for (int t = 0; t < superSample; t++)
                         {
-                            u = ((double)x + rng.NextDouble()) / (double)width;
-                            v = ((double)y + rng.NextDouble()) / (double)height;
-
-                            r = camera.GetRay(u, v);
-                            col += color(r, world, 0);
-                        }
-                        else
-                        {
-                            u = (double)x / (double)width;
-                            v = (double)y / (double)height;
+                            u = ((double)x + ((double)s / (double)superSample)) / (double)width;
+                            v = ((double)y + ((double)t / (double)superSample)) / (double)height;
 
                             r = camera.GetRay(u, v);
                             col += color(r, world, 0);
                         }
                     }
 
-                    col /= (double)superSample;
+                    col /= (double)(superSample * superSample);
                     col = new Vec3(Math.Sqrt(col.x), Math.Sqrt(col.y), Math.Sqrt(col.z));
                     frameBuffer[x, flip - y] = col;
                 }
@@ -124,31 +118,23 @@ namespace CRT
                 int y = i % height;
 
                 Vec3 col = new Vec3();
+                double u;
+                double v;
+                Ray r;
+
                 for (int s = 0; s < superSample; s++)
                 {
-                    double u;
-                    double v;
-                    Ray r;
-
-                    if (superSample > 1)
+                    for (int t = 0; t < superSample; t++)
                     {
-                        u = ((double)x + rng.NextDouble()) / (double)width;
-                        v = ((double)y + rng.NextDouble()) / (double)height;
-
-                        r = camera.GetRay(u, v);
-                        col += color(r, world, 0);
-                    }
-                    else
-                    {
-                        u = (double)x / (double)width;
-                        v = (double)y / (double)height;
+                        u = ((double)x + ((double)s / (double)superSample)) / (double)width;
+                        v = ((double)y + ((double)t / (double)superSample)) / (double)height;
 
                         r = camera.GetRay(u, v);
                         col += color(r, world, 0);
                     }
                 }
 
-                col /= (double)superSample;
+                col /= (double)(superSample * superSample);
                 col = new Vec3(Math.Sqrt(col.x), Math.Sqrt(col.y), Math.Sqrt(col.z));
                 frameBuffer[x, flip - y] = col;
             });

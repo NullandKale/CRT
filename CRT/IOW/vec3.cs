@@ -10,7 +10,6 @@ namespace CRT.IOW
         public double x;
         public double y;
         public double z;
-
         public Vec3(double x, double y, double z)
         {
             this.x = x;
