@@ -186,13 +186,28 @@ namespace CRT.IOW
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool refract(Vec3 v, Vec3 n, double niOverNt, ref Vec3 refracted)
+        public static Vec3 refract(Vec3 v, Vec3 n, double niOverNt)
         {
             Vec3 uv = unitVector(v);
             double dt = dot(uv, n);
             double discriminant = 1.0 - niOverNt * niOverNt * (1 - dt * dt);
 
             if(discriminant > 0)
+            {
+                return Vec3.unitVector(niOverNt * (uv - (n * dt)) - n * Math.Sqrt(discriminant));
+            }
+
+            return new Vec3(1, 0, 0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool refract(Vec3 v, Vec3 n, double niOverNt, ref Vec3 refracted)
+        {
+            Vec3 uv = unitVector(v);
+            double dt = dot(uv, n);
+            double discriminant = 1.0 - niOverNt * niOverNt * (1 - dt * dt);
+
+            if (discriminant > 0)
             {
                 refracted = niOverNt * (uv - (n * dt)) - n * Math.Sqrt(discriminant);
                 return true;

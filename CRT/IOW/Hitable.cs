@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CRT.IOW
 {
@@ -22,6 +25,7 @@ namespace CRT.IOW
     public class HitableList : Hitable
     {
         public List<Hitable> hitables;
+        private Hitable[] hitArray;
         public HitableList()
         {
             hitables = new List<Hitable>();
@@ -30,6 +34,7 @@ namespace CRT.IOW
         public void add(Hitable h)
         {
             hitables.Add(h);
+            hitArray = hitables.ToArray();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -39,9 +44,9 @@ namespace CRT.IOW
             bool hitAnything = false;
             double closestSoFar = tMax;
 
-            for(int i = 0; i < hitables.Count; i++)
+            for (int i = 0; i < hitArray.Length; i++)
             {
-                if(hitables[i].hit(r, tMin, closestSoFar, ref tempRec))
+                if (hitArray[i].hit(r, tMin, closestSoFar, ref tempRec))
                 {
                     hitAnything = true;
                     closestSoFar = tempRec.t;

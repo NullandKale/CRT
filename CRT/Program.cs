@@ -15,20 +15,20 @@ namespace CRT
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
 
-            //testBMP();
+            //testBMP("test.bmp");
             testRayTracer();
         }
 
-        public static void testBMP()
+        public static void testBMP(string fileName)
         {
             height = Console.WindowHeight - 1;
             width = Console.WindowWidth;
             input = new InputManager();
 
-            RayTracer rayTracer = new RayTracer(400, 800, 1, 10, 90, false);
+            RayTracer rayTracer = new RayTracer(900, 1600, 3, 8, 90, false, false);
             Stopwatch timer = new Stopwatch();
             timer.Start();
-            rayTracer.CreateBitmap(true, true, true);
+            rayTracer.CreateBitmap(fileName, true, true);
             timer.Stop();
             Console.WriteLine(string.Format("{0:00.000}", timer.Elapsed.TotalSeconds) + " seconds");
         }
@@ -39,7 +39,7 @@ namespace CRT
             width = Console.WindowWidth - 1;
             input = new InputManager();
 
-            RayTracer rayTracer = new RayTracer(height, width, 2, 5, 90, true);
+            RayTracer rayTracer = new RayTracer(height, width, 2, 8, 90, true, false);
 
             double averageFrameTime = 0;
             long frames = 0;
