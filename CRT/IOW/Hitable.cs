@@ -10,7 +10,7 @@ namespace CRT.IOW
         public double t;
         public Vec3 p;
         public Vec3 normal;
-        public Material material;
+        public MaterialData material;
     }
 
     public interface Hitable
@@ -59,9 +59,9 @@ namespace CRT.IOW
         public Vec3 center;
         public double radius;
         private double radiusSquared;
-        public Material material;
+        public MaterialData material;
 
-        public Sphere(Vec3 center, double radius, Material material)
+        public Sphere(Vec3 center, double radius, MaterialData material)
         {
             this.center = center;
             this.radius = radius;

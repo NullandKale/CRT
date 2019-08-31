@@ -21,6 +21,10 @@ namespace CRT
         public HitableList world;
         public Camera camera;
 
+        public Sphere red;
+        public Sphere green;
+        public Sphere blue;
+
         private Random rng = new Random();
         public RayTracer(int height, int width, int superSample, int maxDepth, int fov, bool consoleAspectFix)
         {
@@ -38,17 +42,20 @@ namespace CRT
             }
             else
             {
-                camera = new Camera(new Vec3(-1, 2, 0), new Vec3(0, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
+                camera = new Camera(new Vec3(-3, 2, 0), new Vec3(0, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
             }
 
-            world.add(new Sphere(new Vec3(0,       0, -1),   0.5, new Lambertian(new Vec3(1, 0, 0))));
-            world.add(new Sphere(new Vec3(0, -100000.5, -1),  100000, new Lambertian(new Vec3(0.25, 0.1, 0.15))));
-            world.add(new Sphere(new Vec3(6,       2,  0),   4, new Metal(new Vec3(0.5, 0.5, 0.5), 1)));
+            red   = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1),     0.5, new MaterialData(material.Lambertian, new Vec3(1, 0, 0)));
+            green = new Sphere(new Vec3(0, rng.NextDouble() + 1,  0),     0.5, new MaterialData(material.Lambertian, new Vec3(0, 1, 0)));
+            blue  = new Sphere(new Vec3(0, rng.NextDouble() + 1,  1),     0.5, new MaterialData(material.Lambertian, new Vec3(0, 0, 1)));
 
-            //for(int i = 0; i < 10; i++)
-            //{
-            //    world.add(new Sphere(new Vec3(Utils.rand(-5, 5), Utils.rand(0, 3), Utils.rand(-5, 5)), Utils.rand(0.5, 2), new Lambertian(Utils.randomColor())));
-            //}
+            world.add(red);
+            world.add(green);
+            world.add(blue);
+
+            world.add(new Sphere(new Vec3(0, -100000.5,  -1),  100000, new MaterialData(material.Lambertian, new Vec3( 0, 0, 0))));
+            world.add(new Sphere(new Vec3(2,         3,   8),       6, new MaterialData(material.Metal, new Vec3( 1, 1, 1), 0)));
+            world.add(new Sphere(new Vec3(2,         3,  -8),       6, new MaterialData(material.Metal, new Vec3( 1, 1, 1), 0)));
         }
 
         Vec3 color(Ray r, Hitable world, int depth)
@@ -59,7 +66,7 @@ namespace CRT
                 Ray scattered = new Ray();
                 Vec3 attenuation = new Vec3();
 
-                if(depth < maxDepth && rec.material != null && rec.material.scatter(r, rec, ref attenuation, ref scattered))
+                if(depth < maxDepth && Material.scatter(r, rec, ref attenuation, ref scattered, rec.material))
                 {
                     return attenuation * color(scattered, world, depth + 1);
                 }
@@ -140,6 +147,10 @@ namespace CRT
             });
         }
 
+        bool dirR = true;
+        bool dirG = true;
+        bool dirB = true;
+
         public void update(bool parallel)
         {
             camera.update();
@@ -153,17 +164,56 @@ namespace CRT
                 GenerateFrame();
             }
 
+            if(red.center.y > 3)
+            {
+                dirR = false;
+            }
+
+            if (green.center.y > 3)
+            {
+                dirG = false;
+            }
+
+            if (blue.center.y > 3)
+            {
+                dirB = false;
+            }
+
+            if (red.center.y < 0)
+            {
+                dirR = true;
+            }
+
+            if (green.center.y < 0)
+            {
+                dirG = true;
+            }
+
+            if (blue.center.y < 0)
+            {
+                dirB = true;
+            }
+
+            double mult = 5;
+
+            red.center.y += dirR ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
+            green.center.y += dirG ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
+            blue.center.y += dirB ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
+
             if (Program.input.IsKeyRising(OpenTK.Input.Key.R))
             {
                 world.hitables.Clear();
 
-                world.add(new Sphere(new Vec3(0, 0, -1), 0.5, new Lambertian(new Vec3(1, 0, 0))));
-                world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new Metal(new Vec3(0.25, 0.1, 0.15), 1)));
-                world.add(new Sphere(new Vec3(6, 2, 0), 2, new Metal(new Vec3(0.5, 0.5, 0.5), 1)));
+                world.add(red);
+                world.add(green);
+                world.add(blue);
+                world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new MaterialData(material.Lambertian, new Vec3(0, 0, 0))));
+                world.add(new Sphere(new Vec3(2, 3, 8), 6, new MaterialData(material.Metal, new Vec3(1, 1, 1), 0)));
+                world.add(new Sphere(new Vec3(2, 3, -8), 6, new MaterialData(material.Metal, new Vec3(1, 1, 1), 0)));
 
                 for (int i = 0; i < 5; i++)
                 {
-                    world.add(new Sphere(new Vec3(Utils.rand(0, 2), Utils.rand(0, 3), Utils.rand(-2, 2)), Utils.rand(0.125, 0.5), new Lambertian(Utils.randomColor())));
+                    world.add(new Sphere(new Vec3(Utils.rand(0, 6), Utils.rand(3, 8), Utils.rand(-5, 5)), Utils.rand(1, 1.5), new MaterialData(material.Lambertian, Utils.randomColor())));
                 }
             }
         }

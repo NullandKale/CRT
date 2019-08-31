@@ -5,48 +5,54 @@ using System.Text;
 
 namespace CRT.IOW
 {
-    public interface Material
+    public enum material
     {
-        bool scatter(Ray r_in, HitRecord rec, ref Vec3 attenuation, ref Ray scattered);
+        None = 0,
+        Lambertian,
+        Metal,
+    }
+    public static class Material
+    {
+        public static bool scatter(Ray r_in, HitRecord rec, ref Vec3 attenuation, ref Ray scattered, MaterialData mat)
+        {
+            switch (mat.mat)
+            {
+                case material.Lambertian:
+                    Vec3 target = rec.p + rec.normal + Utils.randomInUnitSphere();
+                    scattered = new Ray(rec.p, target - rec.p);
+                    attenuation = mat.albedo;
+                    return true;
+                case material.Metal:
+                    Vec3 reflected = Vec3.reflect(Vec3.unitVector(r_in.b), rec.normal);
+                    scattered = new Ray(rec.p, reflected + (mat.fuzz * Utils.randomInUnitSphere()));
+                    attenuation = mat.albedo;
+                    return Vec3.dot(scattered.b, rec.normal) > 0;
+                case material.None:
+                    return false;
+            }
+
+            return false;
+        }
     }
 
-    public class Lambertian : Material
+    public struct MaterialData
     {
-        public Vec3 albedo;
-
-        public Lambertian(Vec3 a)
-        {
-            albedo = a;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool scatter(Ray r_in, HitRecord rec, ref Vec3 attenuation, ref Ray scattered)
-        {
-            Vec3 target = rec.p + rec.normal + Utils.randomInUnitSphere();
-            scattered = new Ray(rec.p, target - rec.p);
-            attenuation = albedo;
-            return true;
-        }
-    }
-
-    public class Metal : Material
-    {
+        public material mat;
         public Vec3 albedo;
         public double fuzz;
 
-        public Metal(Vec3 a, double fuzz)
+        public MaterialData(material mat, Vec3 albedo)
         {
-            albedo = a;
-            this.fuzz = fuzz;
+            this.mat = mat;
+            this.albedo = albedo;
+            fuzz = 0;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool scatter(Ray r_in, HitRecord rec, ref Vec3 attenuation, ref Ray scattered)
+        public MaterialData(material mat, Vec3 albedo, double fuzz)
         {
-            Vec3 reflected = Vec3.reflect(Vec3.unitVector(r_in.b), rec.normal);
-            scattered = new Ray(rec.p, reflected + (fuzz * Utils.randomInUnitSphere()));
-            attenuation = albedo;
-            return Vec3.dot(scattered.b, rec.normal) > 0;
+            this.mat = mat;
+            this.albedo = albedo;
+            this.fuzz = fuzz;
         }
     }
 
