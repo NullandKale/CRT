@@ -40,7 +40,7 @@ namespace CRT
 
             if (consoleAspectFix)
             {
-                camera = new Camera(new Vec3(-1, 2, 0), new Vec3(0, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
+                camera = new Camera(new Vec3(-0.7, 2, -2.1), new Vec3(1.7, 2, -2.1), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
             }
             else
             {
@@ -48,8 +48,8 @@ namespace CRT
             }
 
             lights = new List<Light>();
-            lights.Add(new Light(new Vec3(0, 4, 0), 0.15));
-            lights.Add(new Light(new Vec3(0, 10000, 0), 0.1));
+            lights.Add(new Light(new Vec3(0, -1, 0), 0.01));
+            lights.Add(new Light(new Vec3(0, 100000, 0), 0.1));
 
             red = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1), 0.5, MaterialData.redRubber);
             green = new Sphere(new Vec3(0, rng.NextDouble() + 1, 0), 0.5, MaterialData.greenRubber);
@@ -72,7 +72,7 @@ namespace CRT
 
             if (depth > maxDepth || !world.hit(r, 0.001, double.MaxValue, ref rec))
             {
-                return new Vec3(0, 0, 0);
+                return new Vec3(0, 0, 1);
             }
 
             Vec3 reflectDir = Vec3.unitVector(Vec3.reflect(r.b, rec.normal));
