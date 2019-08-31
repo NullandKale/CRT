@@ -24,9 +24,8 @@ namespace CRT
             height = Console.WindowHeight - 1;
             width = Console.WindowWidth;
             input = new InputManager();
-            Utils.primeRandomUnitSquare(200);
 
-            RayTracer rayTracer = new RayTracer(400, 800, 8, 50, 90, false);
+            RayTracer rayTracer = new RayTracer(400, 800, 8, 4, 90, false);
             Stopwatch timer = new Stopwatch();
             timer.Start();
             rayTracer.CreateBitmap(true, true, true);
@@ -39,9 +38,8 @@ namespace CRT
             height = Console.WindowHeight - 1;
             width = Console.WindowWidth - 1;
             input = new InputManager();
-            Utils.primeRandomUnitSquare(200);
 
-            RayTracer rayTracer = new RayTracer(height, width, 4, 20, 90, true);
+            RayTracer rayTracer = new RayTracer(height, width, 2, 10, 90, true);
 
             double averageFrameTime = 0;
             long frames = 0;

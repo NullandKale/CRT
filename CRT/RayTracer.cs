@@ -19,6 +19,7 @@ namespace CRT
 
         public Vec3[,] frameBuffer;
         public HitableList world;
+        public List<Light> lights;
         public Camera camera;
 
         public Sphere red;
@@ -36,6 +37,7 @@ namespace CRT
             frameBuffer = new Vec3[width, height];
 
             world = new HitableList();
+
             if (consoleAspectFix)
             {
                 camera = new Camera(new Vec3(-1, 2, 0), new Vec3(0, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
@@ -45,44 +47,68 @@ namespace CRT
                 camera = new Camera(new Vec3(-3, 2, 0), new Vec3(0, 2, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
             }
 
-            red   = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1),     0.5, new MaterialData(material.Lambertian, new Vec3(1, 0, 0)));
-            green = new Sphere(new Vec3(0, rng.NextDouble() + 1,  0),     0.5, new MaterialData(material.Lambertian, new Vec3(0, 1, 0)));
-            blue  = new Sphere(new Vec3(0, rng.NextDouble() + 1,  1),     0.5, new MaterialData(material.Lambertian, new Vec3(0, 0, 1)));
+            lights = new List<Light>();
+            lights.Add(new Light(new Vec3(0, 10, 0), 1));
+            lights.Add(new Light(new Vec3(0, 10000, 0), 1));
+
+            red = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1), 0.5, new MaterialData(new Vec3(1, 0, 0)));
+            green = new Sphere(new Vec3(0, rng.NextDouble() + 1, 0), 0.5, new MaterialData(new Vec3(0, 1, 0)));
+            blue = new Sphere(new Vec3(0, rng.NextDouble() + 1, 1), 0.5, new MaterialData(new Vec3(0, 0, 1)));
 
             world.add(red);
             world.add(green);
             world.add(blue);
 
-            world.add(new Sphere(new Vec3(0, -100000.5,  -1),  100000, new MaterialData(material.Lambertian, new Vec3( 0, 0, 0))));
-            world.add(new Sphere(new Vec3(2,         3,   8),       6, new MaterialData(material.Metal, new Vec3( 1, 1, 1), 0)));
-            world.add(new Sphere(new Vec3(2,         3,  -8),       6, new MaterialData(material.Metal, new Vec3( 1, 1, 1), 0)));
+            world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new MaterialData(new Vec3(1,1,1))));
+            world.add(new Sphere(new Vec3(2, 3, 8), 6, MaterialData.glass));
+            world.add(new Sphere(new Vec3(2, 3, 16), 6, MaterialData.mirror));
+            world.add(new Sphere(new Vec3(2, 3, -8), 6, MaterialData.glass));
+            world.add(new Sphere(new Vec3(2, 3, -16), 6, MaterialData.mirror));
         }
 
-        Vec3 color(Ray r, Hitable world, int depth)
+        Vec3 Color(Ray r, Hitable world, int depth)
         {
             HitRecord rec = new HitRecord();
-            if (world.hit(r, 0.001, float.MaxValue, ref rec))
-            {
-                Ray scattered = new Ray();
-                Vec3 attenuation = new Vec3();
 
-                if(depth < maxDepth && Material.scatter(r, rec, ref attenuation, ref scattered, rec.material))
-                {
-                    return attenuation * color(scattered, world, depth + 1);
-                }
-                else
-                {
-                    return new Vec3(1, 1, 1);
-                }
-            }
-            else
+            if (depth > maxDepth || !world.hit(r, 0.001, double.MaxValue, ref rec))
             {
-                Vec3 unitDirection = Vec3.unitVector(r.b);
-                double t = 0.5 * (unitDirection.y + 1.0);
-                Vec3 col = (1.0 - t) * new Vec3(1, 1, 1) + (t * new Vec3(0.1, 0.1, 0.1));
-                return col;
+                return new Vec3(0, 0, 0);
             }
+
+            Vec3 reflectDir = Vec3.unitVector(Vec3.reflect(r.b, rec.normal));
+            Vec3 reflectColor = Color(new Ray(rec.p, reflectDir), world, depth + 1);
+
+            Vec3 refractDir = new Vec3();
+
+            if (Vec3.refract(r.b, rec.normal, rec.material.ref_idx, ref refractDir))
+            {
+                refractDir = Vec3.unitVector(refractDir);
+            }
+
+            Vec3 refractColor = Color(new Ray(rec.p, refractDir), world, depth + 1);
+
+            double diffuseLightIntensity = 0;
+            double specularLightIntensity = 0;
+
+            for(int i = 0; i < lights.Count; i++)
+            {
+                Vec3 lightDir = Vec3.unitVector(lights[i].position - rec.p);
+                double lightDist = (lights[i].position - rec.p).length();
+                Vec3 shadowOrig = rec.p;
+                HitRecord shadowRec = new HitRecord();
+
+                if(world.hit(new Ray(shadowOrig, lightDir), 0.001, double.MaxValue, ref shadowRec) && (shadowRec.p - shadowOrig).length() < lightDist)
+                {
+                    continue;
+                }
+
+                diffuseLightIntensity += lights[i].intensity * Math.Max(0.0, Vec3.dot(lightDir, rec.normal));
+                specularLightIntensity += Math.Pow(Math.Max(0.0, Vec3.dot(-Vec3.reflect(-lightDir, rec.normal), r.b)), rec.material.specularExponent) * lights[i].intensity;
+            }
+
+            return rec.material.diffuseColor * diffuseLightIntensity * rec.material.a0 + new Vec3(1, 1, 1) * specularLightIntensity * rec.material.a1 + reflectColor * rec.material.a2 + refractColor * rec.material.a3;
         }
+
         public void GenerateFrame()
         {
             int flip = (height - 1);
@@ -104,7 +130,7 @@ namespace CRT
                             v = ((double)y + ((double)t / (double)superSample)) / (double)height;
 
                             r = camera.GetRay(u, v);
-                            col += color(r, world, 0);
+                            col += Color(r, world, 0);
                         }
                     }
 
@@ -137,7 +163,7 @@ namespace CRT
                         v = ((double)y + ((double)t / (double)superSample)) / (double)height;
 
                         r = camera.GetRay(u, v);
-                        col += color(r, world, 0);
+                        col += Color(r, world, 0);
                     }
                 }
 
@@ -207,13 +233,15 @@ namespace CRT
                 world.add(red);
                 world.add(green);
                 world.add(blue);
-                world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new MaterialData(material.Lambertian, new Vec3(0, 0, 0))));
-                world.add(new Sphere(new Vec3(2, 3, 8), 6, new MaterialData(material.Metal, new Vec3(1, 1, 1), 0)));
-                world.add(new Sphere(new Vec3(2, 3, -8), 6, new MaterialData(material.Metal, new Vec3(1, 1, 1), 0)));
+                world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new MaterialData(new Vec3(1, 1, 1))));
+                world.add(new Sphere(new Vec3(2, 3, 8), 6, MaterialData.glass));
+                world.add(new Sphere(new Vec3(2, 3, 16), 6, MaterialData.mirror));
+                world.add(new Sphere(new Vec3(2, 3, -8), 6, MaterialData.glass));
+                world.add(new Sphere(new Vec3(2, 3, -16), 6, MaterialData.mirror));
 
                 for (int i = 0; i < 5; i++)
                 {
-                    world.add(new Sphere(new Vec3(Utils.rand(0, 6), Utils.rand(3, 8), Utils.rand(-5, 5)), Utils.rand(1, 1.5), new MaterialData(material.Lambertian, Utils.randomColor())));
+                    world.add(new Sphere(new Vec3(Utils.rand(0, 6), Utils.rand(3, 8), Utils.rand(-5, 5)), Utils.rand(1, 1.5), new MaterialData(Utils.randomColor())));
                 }
             }
         }

@@ -105,45 +105,5 @@ namespace CRT
         {
             return (rng.NextDouble() * (max - min) + min);
         }
-
-        private static List<Vec3> randomVec3s = new List<Vec3>();
-        private static bool trueRandomVecs = true;
-        private static int randomVecCount = 0;
-        public static void primeRandomUnitSquare(int count)
-        {
-            for(int i = 0; i < count; i++)
-            {
-                randomVec3s.Add(randomInUnitSphere());
-            }
-
-            trueRandomVecs = false;
-            randomVecCount = count - 1;
-        }
-
-        private static ThreadLocal<Vec3> p = new ThreadLocal<Vec3>();
-        private static ThreadLocal<Random> rngs = new ThreadLocal<Random>();
-        public static Vec3 randomInUnitSphere()
-        {
-            if (!rngs.IsValueCreated)
-            {
-                rngs.Value = new Random();
-            }
-
-
-            if (trueRandomVecs)
-            {
-                do
-                {
-                    p.Value = (2.0 * new Vec3(rngs.Value.NextDouble(), rngs.Value.NextDouble(), rngs.Value.NextDouble())) - new Vec3(1, 1, 1);
-                }
-                while (p.Value.lengthSquared() >= 1.0);
-
-                return p.Value;
-            }
-            else
-            {
-                return randomVec3s[rngs.Value.Next(0, randomVecCount)];
-            }
-        }
     }
 }
