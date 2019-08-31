@@ -48,22 +48,22 @@ namespace CRT
             }
 
             lights = new List<Light>();
-            lights.Add(new Light(new Vec3(0, 10, 0), 1));
-            lights.Add(new Light(new Vec3(0, 10000, 0), 1));
+            lights.Add(new Light(new Vec3(0, 4, 0), 0.15));
+            lights.Add(new Light(new Vec3(0, 10000, 0), 0.1));
 
-            red = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1), 0.5, new MaterialData(new Vec3(1, 0, 0)));
-            green = new Sphere(new Vec3(0, rng.NextDouble() + 1, 0), 0.5, new MaterialData(new Vec3(0, 1, 0)));
-            blue = new Sphere(new Vec3(0, rng.NextDouble() + 1, 1), 0.5, new MaterialData(new Vec3(0, 0, 1)));
+            red = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1), 0.5, MaterialData.redRubber);
+            green = new Sphere(new Vec3(0, rng.NextDouble() + 1, 0), 0.5, MaterialData.greenRubber);
+            blue = new Sphere(new Vec3(0, rng.NextDouble() + 1, 1), 0.5, MaterialData.blueRubber);
 
             world.add(red);
             world.add(green);
             world.add(blue);
 
-            world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new MaterialData(new Vec3(1,1,1))));
-            world.add(new Sphere(new Vec3(2, 3, 8), 6, MaterialData.glass));
-            world.add(new Sphere(new Vec3(2, 3, 16), 6, MaterialData.mirror));
-            world.add(new Sphere(new Vec3(2, 3, -8), 6, MaterialData.glass));
-            world.add(new Sphere(new Vec3(2, 3, -16), 6, MaterialData.mirror));
+            world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, MaterialData.whiteRubber));
+            world.add(new Sphere(new Vec3(2, 3, 8), 6, MaterialData.mirror));
+            world.add(new Sphere(new Vec3(2, 3, 16), 6, new MaterialData(MaterialPrefab.glass, Utils.randomColor())));
+            world.add(new Sphere(new Vec3(2, 3, -8), 6, MaterialData.mirror));
+            world.add(new Sphere(new Vec3(2, 3, -16), 6, new MaterialData(MaterialPrefab.glass, Utils.randomColor())));
         }
 
         Vec3 Color(Ray r, Hitable world, int depth)
@@ -233,7 +233,8 @@ namespace CRT
                 world.add(red);
                 world.add(green);
                 world.add(blue);
-                world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new MaterialData(new Vec3(1, 1, 1))));
+
+                world.add(new Sphere(new Vec3(0, -100000.5, -1), 100000, new MaterialData(MaterialPrefab.ivory, new Vec3(1, 1, 1))));
                 world.add(new Sphere(new Vec3(2, 3, 8), 6, MaterialData.glass));
                 world.add(new Sphere(new Vec3(2, 3, 16), 6, MaterialData.mirror));
                 world.add(new Sphere(new Vec3(2, 3, -8), 6, MaterialData.glass));
@@ -241,7 +242,7 @@ namespace CRT
 
                 for (int i = 0; i < 5; i++)
                 {
-                    world.add(new Sphere(new Vec3(Utils.rand(0, 6), Utils.rand(3, 8), Utils.rand(-5, 5)), Utils.rand(1, 1.5), new MaterialData(Utils.randomColor())));
+                    world.add(new Sphere(new Vec3(Utils.rand(0, 6), Utils.rand(3, 8), Utils.rand(-5, 5)), Utils.rand(1, 1.5), new MaterialData(MaterialPrefab.rubber, Utils.randomColor())));
                 }
             }
         }
