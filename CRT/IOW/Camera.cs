@@ -30,7 +30,6 @@ namespace CRT.IOW
         public void update()
         {
             Vec3 movement = new Vec3();
-            Vec3 strafe = new Vec3();
             double speed = 0.3;
             bool changed = false;
 
@@ -62,19 +61,29 @@ namespace CRT.IOW
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.Q))
             {
-                //movement.y += speed;
                 vfov -= 1;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.E))
             {
-                //movement.y -= speed;
                 vfov += 1;
                 changed = true;
             }
 
-            if(changed)
+            if (Program.input.IsKeyHeld(OpenTK.Input.Key.Z))
+            {
+                movement.y += speed;
+                changed = true;
+            }
+
+            if (Program.input.IsKeyHeld(OpenTK.Input.Key.X))
+            {
+                movement.y -= speed;
+                changed = true;
+            }
+
+            if (changed)
             {
                 origin += movement;
                 lookAt += movement;

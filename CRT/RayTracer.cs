@@ -250,24 +250,12 @@ namespace CRT
             green.center.y += dirG ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
             blue.center.y += dirB ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
 
-            if (Program.input.IsKeyRising(OpenTK.Input.Key.R))
+            if (Program.input.IsKeyFalling(OpenTK.Input.Key.R))
             {
-                world.hitables.Clear();
-
-                world.add(new Sphere(new Vec3(-6, 1, 8), 0.5, MaterialData.ivory));
-                world.add(new Sphere(new Vec3(-5, 2, 8), 0.5, MaterialData.glass));
-                world.add(new Sphere(new Vec3(-4.5, 1, 11), 0.75, MaterialData.redRubber));
-                world.add(new Sphere(new Vec3(-4, 3, 10), 1.5, MaterialData.mirror));
-
-                world.add(red);
-                world.add(green);
-                world.add(blue);
-
-                world.add(new Sphere(new Vec3(-7, -100000, -18), 100000, new MaterialData(MaterialPrefab.ivory, new Vec3(1, 0.64, 0))));
-
                 for (int i = 0; i < 5; i++)
                 {
-                    world.add(new Sphere(new Vec3(Utils.rand(0, 6), Utils.rand(3, 8), Utils.rand(-5, 5)), Utils.rand(1, 1.5), new MaterialData(MaterialPrefab.rubber, Utils.randomColor())));
+                    double height = Utils.rand(0, 5);
+                    world.add(new Sphere(new Vec3(Utils.rand(-10, 10), height, Utils.rand(-10, 10)), height * 0.5, new MaterialData(MaterialPrefab.rubber, Utils.randomColor())));
                 }
             }
         }
