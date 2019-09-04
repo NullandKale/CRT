@@ -42,11 +42,11 @@ namespace CRT
 
             if (consoleAspectFix)
             {
-                camera = new Camera(new Vec3(-8, 1.5, 9), new Vec3(2, 1.5, 9), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
+                camera = new Camera(new Vec3(0, 1, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
             }
             else
             {
-                camera = new Camera(new Vec3(-8, 1.5, 9), new Vec3(2, 1.5, 9), new Vec3(0, 1, 0), fov, (double)width / (double)height);
+                camera = new Camera(new Vec3(0, 1, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
             }
 
             lights = new List<Light>();

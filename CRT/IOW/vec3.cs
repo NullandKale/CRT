@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -37,7 +38,7 @@ namespace CRT.IOW
 
         public override string ToString()
         {
-            return "x:" + x + " y:" + y + " z:" + z;
+            return "x:" + string.Format("{0:00.000}", x) + " y:" + string.Format("{0:00.000}", y) + " z:" + string.Format("{0:00.000}", z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -214,6 +215,26 @@ namespace CRT.IOW
             }
 
             return false;
+        }
+
+        public static implicit operator Vector3(Vec3 d)
+        {
+            return new Vector3((float)d.x, (float)d.y, (float)d.z);
+        }
+
+        public static implicit operator Vec3(Vector3 d)
+        {
+            return new Vec3(d.X, d.Y, d.Z);
+        }
+
+        public static implicit operator Vector4(Vec3 d)
+        {
+            return new Vector4((float)d.x, (float)d.y, (float)d.z, 0);
+        }
+
+        public static implicit operator Vec3(Vector4 d)
+        {
+            return new Vec3(d.X, d.Y, d.Z);
         }
     }
 }
