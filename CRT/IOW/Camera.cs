@@ -67,11 +67,6 @@ namespace CRT.IOW
 
             if (changed)
             {
-                //Vec3 dir = Vec3.unitVector(lookAt - origin);
-                //movement = Vec3.cross(dir, movement);
-
-
-
                 origin += movement;
                 lookAt += movement;
                 updatePos();
