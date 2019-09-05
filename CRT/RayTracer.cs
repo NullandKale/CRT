@@ -50,10 +50,9 @@ namespace CRT
             }
 
             lights = new List<Light>();
-            lights.Add(new Light(new Vec3(0, 10000, 0), 0.01));
-            lights.Add(new Light(new Vec3(-20, 20,  12), 0.25));
-            lights.Add(new Light(new Vec3( 20, 50, -17), 0.4));
-            lights.Add(new Light(new Vec3( 30, 20,  22), 0.25));
+            lights.Add(new Light(new Vec3(-20, 20,  12), 0.07));
+            lights.Add(new Light(new Vec3( 20, 50, -17), 0.15));
+            lights.Add(new Light(new Vec3( 30, 20,  22), 0.07));
 
             red = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1), 0.5, MaterialData.redRubber);
             green = new Sphere(new Vec3(0, rng.NextDouble() + 1, 0), 0.5, MaterialData.greenRubber);
@@ -70,7 +69,7 @@ namespace CRT
             world.add(blue);
             world.add(new Sphere(new Vec3(0, 3, 4), 2, MaterialData.mirror));
 
-            world.add(new Sphere(new Vec3(-7, -100000, -18), 100000, MaterialData.blackRubber));
+            world.add(new Sphere(new Vec3(-7, -1000000, -18), 1000000, MaterialData.greenRubber));
         }
 
         Vec3 Color(Ray r, Hitable world, int depth)
@@ -79,7 +78,7 @@ namespace CRT
 
             if (depth > maxDepth || !world.hit(r, 0.001, double.MaxValue, ref rec))
             {
-                return new Vec3(0, 0, 0);
+                return new Vec3(0.0, 0.5, 1.0);
             }
 
             Vec3 reflectDir;
@@ -205,7 +204,7 @@ namespace CRT
 
         public void update(bool parallel)
         {
-            camera.update();
+            camera.update(this);
 
             if (parallel)
             {

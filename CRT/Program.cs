@@ -17,7 +17,7 @@ namespace CRT
             Console.BackgroundColor = ConsoleColor.Black;
 
             //testBMP("test.bmp");
-            testRayTracer();
+            testRayTracer(false);
         }
 
         public static void testBMP(string fileName)
@@ -34,22 +34,26 @@ namespace CRT
             Console.WriteLine(string.Format("{0:00.000}", timer.Elapsed.TotalSeconds) + " seconds");
         }
 
-        public static void testRayTracer()
+        public static void testRayTracer(bool doBenchmark)
         {
             height = Console.WindowHeight - 1;
             width = Console.WindowWidth - 1;
             input = new InputManager();
 
-            RayTracer rayTracer = new RayTracer(height, width, 2, 8, 90, true, false);
+            RayTracer rayTracer = new RayTracer(height, width, 2, 16, 90, true, false);
             rayTracer.camera.doUpdate = true;
 
             double averageFrameTime = 0;
             long frames = 0;
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
             Stopwatch totalTime = new Stopwatch();
-            totalTime.Start();
+            if (doBenchmark)
+            {
+                totalTime.Start();
+            }
 
             while (true)
             {
@@ -62,7 +66,7 @@ namespace CRT
                 Console.Write(string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS FOV:" + rayTracer.camera.vfov + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin) + "                       ");
                 stopwatch.Restart();
 
-                if(totalTime.Elapsed.TotalSeconds > 30)
+                if(doBenchmark && totalTime.Elapsed.TotalSeconds > 30)
                 {
                     Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n");
                     Console.WriteLine("Benchmark Result: " + frames + " frames in " + totalTime.Elapsed.ToString() + string.Format(" AVG FPS: {0:0.00}", 1.0 / (averageFrameTime / frames)));

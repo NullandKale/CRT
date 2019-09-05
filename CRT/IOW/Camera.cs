@@ -42,12 +42,12 @@ namespace CRT.IOW
             updatePos();
         }
 
-        public void update()
+        public void update(RayTracer rayTracer)
         {
             if(doUpdate)
             {
                 doMove();
-                doLook();
+                doLook(rayTracer);
             }
         }
 
@@ -89,7 +89,7 @@ namespace CRT.IOW
             }
         }
 
-        private void doLook()
+        private void doLook(RayTracer rayTracer)
         {
             Vec3 strafe = new Vec3();
             double strafeSpeed = 0.08;
@@ -133,7 +133,7 @@ namespace CRT.IOW
 
             if(Program.input.IsKeyRising(OpenTK.Input.Key.P))
             {
-                takeScreenshot("ScreenShot.bmp", this, );
+                takeScreenshot("ScreenShot.bmp", this, rayTracer.world);
             }
 
             if (changed)
@@ -157,12 +157,12 @@ namespace CRT.IOW
 
         public void takeScreenshot(string fileName, Camera camera, HitableList world)
         {
-            RayTracer rayTracer = new RayTracer(900, 1600, 1, 8, 90, false, false);
+            RayTracer rayTracer = new RayTracer(900, 1600, 2, 32, (int)camera.vfov, false, false);
             rayTracer.camera.origin = camera.origin;
             rayTracer.camera.lookAt = camera.lookAt;
             rayTracer.camera.updatePos();
             rayTracer.world = world;
-            rayTracer.CreateBitmap(fileName, true, false);
+            rayTracer.CreateBitmap(fileName, true, true);
         }
 
         public void updatePos()
