@@ -38,7 +38,7 @@ namespace CRT.IOW
 
         public override string ToString()
         {
-            return "x:" + string.Format("{0:00.000}", x) + " y:" + string.Format("{0:00.000}", y) + " z:" + string.Format("{0:00.000}", z);
+            return "{" + string.Format("{0:0.00}", x) + ", " + string.Format("{0:0.00}", y) + ", " + string.Format("{0:0.00}", z) + "}";
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

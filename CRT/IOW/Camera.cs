@@ -38,30 +38,30 @@ namespace CRT.IOW
         private void doMove()
         {
             Vec3 movement = new Vec3();
-            double speed = 0.3;
+            double speed = 0.10;
             bool changed = false;
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.W))
             {
-                movement.x += speed;
+                movement += (lookAt - origin) * speed;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.S))
             {
-                movement.x -= speed;
+                movement -= (lookAt - origin) * speed;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.D))
             {
-                movement.z += speed;
+                movement -= Vec3.cross(vup, (lookAt - origin)) * speed;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.A))
             {
-                movement.z -= speed;
+                movement += Vec3.cross(vup, (lookAt - origin)) * speed;
                 changed = true;
             }
 
@@ -81,25 +81,25 @@ namespace CRT.IOW
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.Up))
             {
-                strafe.y += strafeSpeed;
+                strafe.x -= strafeSpeed / 2;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.Down))
             {
-                strafe.y -= strafeSpeed;
+                strafe.x += strafeSpeed / 2;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.Left))
             {
-                strafe.z += strafeSpeed;
+                strafe.y -= strafeSpeed;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.Right))
             {
-                strafe.z -= strafeSpeed;
+                strafe.y += strafeSpeed;
                 changed = true;
             }
 
@@ -118,9 +118,17 @@ namespace CRT.IOW
             if (changed)
             {
                 Vector4 temp = lookAt - origin;
-                temp = Vector4.Transform(temp, Matrix4x4.CreateRotationZ((float)strafe.y));
-                temp = Vector4.Transform(temp, Matrix4x4.CreateRotationY((float)strafe.z));
-                lookAt = origin + (Vec3)temp;
+
+                if(strafe.y != 0)
+                {
+                    temp += Vector4.Transform(temp, Matrix4x4.CreateFromAxisAngle(Vec3.cross(Vec3.cross(vup, (lookAt - origin)), (lookAt - origin)), (float)strafe.y));
+                }
+                if (strafe.x != 0)
+                {
+                    temp += Vector4.Transform(temp, Matrix4x4.CreateFromAxisAngle(Vec3.cross(vup, (lookAt - origin)), (float)strafe.x));
+                }
+                
+                lookAt = origin + Vec3.unitVector(temp);
 
                 updatePos();
             }
@@ -136,7 +144,7 @@ namespace CRT.IOW
             double half_height = Math.Tan(theta / 2.0);
             double half_width = aspect * half_height;
 
-            w = Vec3.unitVector(origin - lookAt);
+            w = Vec3.unitVector(origin - (lookAt));
             u = Vec3.unitVector(Vec3.cross(vup, w));
             v = Vec3.cross(w, u);
 

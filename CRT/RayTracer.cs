@@ -64,11 +64,13 @@ namespace CRT
             world.add(new Sphere(new Vec3(-4.5, 1, 11), 0.75, MaterialData.redRubber));
             world.add(new Sphere(new Vec3(  -4, 3, 10),  1.5, MaterialData.mirror));
 
+            world.add(new Sphere(new Vec3(0, 3, -4), 2, MaterialData.mirror));
             world.add(red);
             world.add(green);
             world.add(blue);
+            world.add(new Sphere(new Vec3(0, 3, 4), 2, MaterialData.mirror));
 
-            world.add(new Sphere(new Vec3(-7, -100000, -18), 100000, new MaterialData(MaterialPrefab.ivory, new Vec3(1, 0.5, 0))));
+            world.add(new Sphere(new Vec3(-7, -100000, -18), 100000, MaterialData.blackRubber));
         }
 
         Vec3 Color(Ray r, Hitable world, int depth)
