@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CRT.IOW;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -25,7 +26,7 @@ namespace CRT
             width = Console.WindowWidth;
             input = new InputManager();
 
-            RayTracer rayTracer = new RayTracer(900, 1600, 3, 8, 90, false, false);
+            RayTracer rayTracer = new RayTracer(900, 1600, 1, 8, 90, false, false);
             Stopwatch timer = new Stopwatch();
             timer.Start();
             rayTracer.CreateBitmap(fileName, true, true);
@@ -40,6 +41,7 @@ namespace CRT
             input = new InputManager();
 
             RayTracer rayTracer = new RayTracer(height, width, 2, 8, 90, true, false);
+            rayTracer.camera.doUpdate = true;
 
             double averageFrameTime = 0;
             long frames = 0;

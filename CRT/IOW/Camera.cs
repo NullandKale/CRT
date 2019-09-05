@@ -17,6 +17,8 @@ namespace CRT.IOW
         public double vfov;
         public double aspect;
 
+        public bool doUpdate = false;
+
         Matrix4x4 cameraToWorld;
 
         public Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 vup, double vfov, double aspect)
@@ -29,10 +31,24 @@ namespace CRT.IOW
             updatePos();
         }
 
+        public Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 vup, double vfov, double aspect, bool doUpdate)
+        {
+            origin = lookFrom;
+            this.lookAt = lookAt;
+            this.vup = vup;
+            this.vfov = vfov;
+            this.aspect = aspect;
+            this.doUpdate = doUpdate;
+            updatePos();
+        }
+
         public void update()
         {
-            doMove();
-            doLook();
+            if(doUpdate)
+            {
+                doMove();
+                doLook();
+            }
         }
 
         private void doMove()
@@ -115,6 +131,11 @@ namespace CRT.IOW
                 changed = true;
             }
 
+            if(Program.input.IsKeyRising(OpenTK.Input.Key.P))
+            {
+                takeScreenshot("ScreenShot.bmp", this, );
+            }
+
             if (changed)
             {
                 Vector4 temp = lookAt - origin;
@@ -132,6 +153,16 @@ namespace CRT.IOW
 
                 updatePos();
             }
+        }
+
+        public void takeScreenshot(string fileName, Camera camera, HitableList world)
+        {
+            RayTracer rayTracer = new RayTracer(900, 1600, 1, 8, 90, false, false);
+            rayTracer.camera.origin = camera.origin;
+            rayTracer.camera.lookAt = camera.lookAt;
+            rayTracer.camera.updatePos();
+            rayTracer.world = world;
+            rayTracer.CreateBitmap(fileName, true, false);
         }
 
         public void updatePos()
