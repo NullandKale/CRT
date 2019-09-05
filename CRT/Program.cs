@@ -64,7 +64,7 @@ namespace CRT
                 {
                     Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n");
                     Console.WriteLine("Benchmark Result: " + frames + " frames in " + totalTime.Elapsed.ToString() + string.Format(" AVG FPS: {0:0.00}", 1.0 / (averageFrameTime / frames)));
-                    Console.WriteLine("\n\n\nDid you know you can use wasd to move and qe to change fov and r to spawn random spheres");
+                    Console.WriteLine("\n\n\nDid you know you can use wasd to move, qe to change fov, r to spawn random spheres, and zx to change elevation");
                     Console.WriteLine("\nFor best FPS make sure to build release instead of debug, also run without debugging");
                     Console.WriteLine("\nFor most repeatable benchmark do not press any keys for first " + totalTime.Elapsed.TotalSeconds + " seconds");
                     Console.WriteLine("\nPress enter to continue");
