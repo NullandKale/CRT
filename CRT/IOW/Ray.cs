@@ -16,7 +16,6 @@ namespace CRT.IOW
             this.b = b;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vec3 pointAtParameter(double t)
         {
             return a + (t * b);

@@ -17,8 +17,7 @@ namespace CRT.IOW
     }
 
     public interface Hitable
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    {   
         bool hit(Ray r, double tMin, double tMax, ref HitRecord rec);
     }
 
@@ -37,7 +36,6 @@ namespace CRT.IOW
             hitArray = hitables.ToArray();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool hit(Ray r, double tMin, double tMax, ref HitRecord rec)
         {
             HitRecord tempRec = new HitRecord();
@@ -58,7 +56,6 @@ namespace CRT.IOW
         }
     }
 
-
     public class Sphere : Hitable
     {
         public Vec3 center;
@@ -74,7 +71,6 @@ namespace CRT.IOW
             this.material = material;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool hit(Ray r, double tMin, double tMax, ref HitRecord rec)
         {
             Vec3 oc = r.a - center;

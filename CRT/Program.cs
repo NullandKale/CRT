@@ -13,7 +13,7 @@ namespace CRT
 
         static void Main(string[] args)
         {
-            testRayTracer(true);
+            testRayTracer(false);
         }
 
         public static void testBMP(string fileName)
