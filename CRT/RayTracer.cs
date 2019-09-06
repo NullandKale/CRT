@@ -59,9 +59,9 @@ namespace CRT
             blue = new Sphere(new Vec3(0, rng.NextDouble() + 1, 1), 0.5, MaterialData.blueRubber);
 
             world.add(new Sphere(new Vec3(  -6, 1,  8),  0.5, MaterialData.ivory));
-            world.add(new Sphere(new Vec3(  -5, 2,  8),  0.5, MaterialData.glass));
+            world.add(new Sphere(new Vec3(  -5, 2,  8),  0.5, MaterialData.mirror));
             world.add(new Sphere(new Vec3(-4.5, 1, 11), 0.75, MaterialData.redRubber));
-            world.add(new Sphere(new Vec3(  -4, 3, 10),  1.5, MaterialData.mirror));
+            world.add(new Sphere(new Vec3(  -4, 3, 10),  1.5, MaterialData.glass));
 
             world.add(new Sphere(new Vec3(0, 3, -4), 2, MaterialData.mirror));
             world.add(red);
@@ -113,7 +113,6 @@ namespace CRT
                 {
                     refractDir = Vec3.unitVector(refractDir);
                 }
-
                 refractColor = Color(new Ray(rec.p, refractDir), world, depth + 1);
             }
 

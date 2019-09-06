@@ -124,19 +124,27 @@ namespace CRT.IOW
             return v - 2 * dot(v, n) * n;
         }
 
-
         public static Vec3 refract(Vec3 v, Vec3 n, double niOverNt)
         {
-            Vec3 uv = unitVector(v);
-            double dt = dot(uv, n);
-            double discriminant = 1.0 - niOverNt * niOverNt * (1 - dt * dt);
+            double cosi = Math.Clamp(-1, 1, Vec3.dot(v, n));
+            double etai = 1;
+            double etat = niOverNt;
 
-            if (discriminant > 0)
+            if (cosi < 0)
             {
-                return Vec3.unitVector(niOverNt * (uv - (n * dt)) - n * Math.Sqrt(discriminant));
+                cosi = -cosi;
+            }
+            else
+            {
+                etat = 1;
+                etai = niOverNt;
+                n = -n;
             }
 
-            return new Vec3(1, 0, 0);
+            double eta = etai / etat;
+            double k = 1 - eta * eta * (1 - cosi * cosi);
+
+            return k < 0 ? new Vec3(0, 0, 0) : eta * v + (eta * cosi - Math.Sqrt(k)) * n;
         }
 
 
