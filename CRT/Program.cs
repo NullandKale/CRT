@@ -53,12 +53,24 @@ namespace CRT
 
             while (true)
             {
-                rayTracer.Draw(true, false);
-                input.Update();
+                rayTracer.update(true);
+
+                if(!doBenchmark)
+                {
+                    rayTracer.Draw(false);
+                    input.Update();
+
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.SetCursorPosition(0, 0);
+                }
+
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.Black;
+
                 Console.Write(string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS" 
                                             + " FOV:" + rayTracer.camera.vfov 
                                             + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin) 
@@ -68,7 +80,7 @@ namespace CRT
                                             + "MS                       ");
                 stopwatch.Restart();
 
-                if(doBenchmark && totalTime.Elapsed.TotalSeconds > 120)
+                if(doBenchmark && totalTime.Elapsed.TotalSeconds > 60)
                 {
                     Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n");
                     Console.WriteLine("Benchmark Result: " + frames + " frames in " + totalTime.Elapsed.ToString() + string.Format(" AVG FPS: {0:0.00}", 1.0 / (averageFrameTime / frames)));

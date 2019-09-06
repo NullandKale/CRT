@@ -278,9 +278,21 @@ namespace CRT
 
         public Bitmap CreateBitmap(string fileName, bool open, bool parallel)
         {
-            Bitmap bitmap = new Bitmap(width, height);
+            timer.Restart();
 
-            update(parallel);
+            if (parallel)
+            {
+                GenerateFrameParallel();
+            }
+            else
+            {
+                GenerateFrame();
+            }
+
+            timer.Stop();
+            renderTime = timer.Elapsed;
+
+            Bitmap bitmap = new Bitmap(width, height);
 
             for (int x = 0; x < width; x++)
             {
@@ -306,10 +318,8 @@ namespace CRT
         public TimeSpan renderTime;
         public TimeSpan drawTime;
 
-        public void Draw(bool parallel, bool greyScale)
+        public void Draw(bool greyScale)
         {
-            update(parallel);
-
             timer.Restart();
 
             Console.SetCursorPosition(0, 0);
