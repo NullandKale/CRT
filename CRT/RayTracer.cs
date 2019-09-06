@@ -76,7 +76,12 @@ namespace CRT
         {
             HitRecord rec = new HitRecord();
 
-            if (depth > maxDepth || !world.hit(r, 0.001, double.MaxValue, ref rec))
+            if (depth > maxDepth)
+            {
+                return new Vec3(0.0, 0.5, 1.0);
+            }
+
+            if (!world.hit(r, 0.001, double.MaxValue, ref rec))
             {
                 return new Vec3(0.0, 0.5, 1.0);
             }
@@ -198,13 +203,20 @@ namespace CRT
             });
         }
 
-        bool dirR = true;
-        bool dirG = true;
-        bool dirB = true;
+        private bool dirR = true;
+        private bool dirG = true;
+        private bool dirB = true;
+        private Stopwatch timer = new Stopwatch();
 
         public void update(bool parallel)
         {
+            timer.Restart();
             camera.update(this);
+
+            timer.Stop();
+            updateTime = timer.Elapsed;
+
+            timer.Restart();
 
             if (parallel)
             {
@@ -214,6 +226,9 @@ namespace CRT
             {
                 GenerateFrame();
             }
+
+            timer.Stop();
+            renderTime = timer.Elapsed;
 
             if(red.center.y > 3)
             {
@@ -287,9 +302,15 @@ namespace CRT
             return bitmap;
         }
 
+        public TimeSpan updateTime;
+        public TimeSpan renderTime;
+        public TimeSpan drawTime;
+
         public void Draw(bool parallel, bool greyScale)
         {
             update(parallel);
+
+            timer.Restart();
 
             Console.SetCursorPosition(0, 0);
             ConsoleColor current = Console.BackgroundColor;
@@ -330,6 +351,9 @@ namespace CRT
 
                 Console.WriteLine((char[])line.ToArray());
             }
+
+            timer.Stop();
+            drawTime = timer.Elapsed;
         }
     }
 }

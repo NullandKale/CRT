@@ -122,12 +122,14 @@ namespace CRT.IOW
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.Q))
             {
                 vfov -= 1;
+                //rayTracer.maxDepth -= 1;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.E))
             {
                 vfov += 1;
+                //rayTracer.maxDepth += 1;
                 changed = true;
             }
 
