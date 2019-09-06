@@ -117,7 +117,7 @@ namespace CRT
                 refractColor = Color(new Ray(rec.p, refractDir), world, depth + 1);
             }
 
-            double diffuseLightIntensity = 0;
+            double diffuseLightIntensity = 0.05;
             double specularLightIntensity = 0;
 
             for(int i = 0; i < lights.Count; i++)

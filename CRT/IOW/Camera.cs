@@ -18,9 +18,6 @@ namespace CRT.IOW
         public double aspect;
 
         public bool doUpdate = false;
-
-        Matrix4x4 cameraToWorld;
-
         public Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 vup, double vfov, double aspect)
         {
             origin = lookFrom;
