@@ -17,6 +17,14 @@ namespace CRT
         public int superSample;
         public int maxDepth;
 
+        private Stopwatch timer = new Stopwatch();
+        public TimeSpan updateTime;
+        public TimeSpan renderTime;
+        public TimeSpan drawTime;
+
+        public Vec3 backgroundColor = new Vec3(0, 0.25, 1);
+        public Vec3 depthColor = new Vec3(1, 1, 1);
+
         public Vec3[,] frameBuffer;
         public HitableList world;
         public List<Light> lights;
@@ -27,14 +35,17 @@ namespace CRT
         public Sphere blue;
 
         private Random rng = new Random();
-        private bool occlusionFix = false;
-        public RayTracer(int height, int width, int superSample, int maxDepth, int fov, bool consoleAspectFix, bool occlusionFix)
+
+        private bool dirR = true;
+        private bool dirG = true;
+        private bool dirB = true;
+        private int pallet = 0;
+        public RayTracer(int height, int width, int superSample, int maxDepth, int fov, bool consoleAspectFix)
         {
             this.height = height;
             this.width = width;
             this.superSample = superSample;
             this.maxDepth = maxDepth;
-            this.occlusionFix = occlusionFix;
 
             frameBuffer = new Vec3[width, height];
 
@@ -78,43 +89,30 @@ namespace CRT
 
             if (depth > maxDepth)
             {
-                return new Vec3(0.0, 0.5, 1.0);
+                return depthColor;
             }
 
             if (!world.hit(r, 0.001, double.MaxValue, ref rec))
             {
-                return new Vec3(0.0, 0.5, 1.0);
+                return backgroundColor;
             }
 
             Vec3 reflectDir;
-            Vec3 reflectOrig;
             Vec3 reflectColor;
             Vec3 refractDir;
-            Vec3 refractOrig;
             Vec3 refractColor;
 
-            if (occlusionFix)
-            {
-                reflectDir = Vec3.unitVector(Vec3.reflect(r.b, rec.normal));
-                reflectOrig = Vec3.dot(reflectDir, rec.normal) < 0 ? rec.p - rec.normal * 1e-3 : rec.p + rec.normal * 1e-3;
-                reflectColor = Color(new Ray(reflectOrig, reflectDir), world, depth + 1);
-                refractDir = Vec3.refract(r.b, rec.normal, rec.material.ref_idx);
-                refractOrig = Vec3.dot(refractDir, rec.normal) < 0 ? rec.p - rec.normal * 1e-3 : rec.p + rec.normal * 1e-3;
-                refractColor = Color(new Ray(refractOrig, refractDir), world, depth + 1);
-            }
-            else
-            {
-                reflectDir = Vec3.unitVector(Vec3.reflect(r.b, rec.normal));
-                reflectColor = Color(new Ray(rec.p, reflectDir), world, depth + 1);
+            reflectDir = Vec3.unitVector(Vec3.reflect(r.b, rec.normal));
+            reflectColor = Color(new Ray(rec.p, reflectDir), world, depth + 1);
 
-                refractDir = new Vec3();
+            refractDir = new Vec3();
 
-                if (Vec3.refract(r.b, rec.normal, rec.material.ref_idx, ref refractDir))
-                {
-                    refractDir = Vec3.unitVector(refractDir);
-                }
-                refractColor = Color(new Ray(rec.p, refractDir), world, depth + 1);
+            if (Vec3.refract(r.b, rec.normal, rec.material.ref_idx, ref refractDir))
+            {
+                refractDir = Vec3.unitVector(refractDir);
             }
+
+            refractColor = Color(new Ray(rec.p, refractDir), world, depth + 1);
 
             double diffuseLightIntensity = 0.05;
             double specularLightIntensity = 0;
@@ -202,32 +200,10 @@ namespace CRT
             });
         }
 
-        private bool dirR = true;
-        private bool dirG = true;
-        private bool dirB = true;
-        private Stopwatch timer = new Stopwatch();
-
         public void update(bool parallel)
         {
             timer.Restart();
             camera.update(this);
-
-            timer.Stop();
-            updateTime = timer.Elapsed;
-
-            timer.Restart();
-
-            if (parallel)
-            {
-                GenerateFrameParallel();
-            }
-            else
-            {
-                GenerateFrame();
-            }
-
-            timer.Stop();
-            renderTime = timer.Elapsed;
 
             if(red.center.y > 3)
             {
@@ -273,9 +249,34 @@ namespace CRT
                     world.add(new Sphere(new Vec3(Utils.rand(-10, 10), height, Utils.rand(-10, 10)), height * 0.5, new MaterialData(MaterialPrefab.rubber, Utils.randomColor())));
                 }
             }
+
+            if(Program.input.IsKeyFalling(OpenTK.Input.Key.Number0))
+            {
+                pallet = 0;
+            }
+
+            if (Program.input.IsKeyFalling(OpenTK.Input.Key.Number1))
+            {
+                pallet = 1;
+            }
+
+            if (Program.input.IsKeyFalling(OpenTK.Input.Key.Number2))
+            {
+                pallet = 2;
+            }
+
+
+            timer.Stop();
+            updateTime = timer.Elapsed;
         }
 
-        public Bitmap CreateBitmap(string fileName, bool open, bool parallel)
+        public void renderDrawAsync(bool parallel, bool greyScale)
+        {
+            StartRender(parallel);
+            Draw(greyScale);
+        }
+
+        public void StartRender(bool parallel)
         {
             timer.Restart();
 
@@ -290,6 +291,11 @@ namespace CRT
 
             timer.Stop();
             renderTime = timer.Elapsed;
+        }
+
+        public Bitmap CreateBitmap(string fileName, bool open, bool parallel)
+        {
+            StartRender(parallel);
 
             Bitmap bitmap = new Bitmap(width, height);
 
@@ -297,7 +303,7 @@ namespace CRT
             {
                 for (int y = 0; y < height; y++)
                 {
-                    bitmap.SetPixel(x,y, Utils.toRGB(frameBuffer[x,y]));
+                    bitmap.SetPixel(x, y, Utils.toRGB(frameBuffer[x, y]));
                 }
             }
 
@@ -305,17 +311,13 @@ namespace CRT
 
             Thread.Sleep(100);
 
-            if(open)
+            if (open)
             {
                 Process.Start(@"cmd.exe ", @"/c " + fileName);
             }
 
             return bitmap;
         }
-
-        public TimeSpan updateTime;
-        public TimeSpan renderTime;
-        public TimeSpan drawTime;
 
         public void Draw(bool greyScale)
         {
@@ -339,11 +341,11 @@ namespace CRT
                     {
                         if(greyScale)
                         {
-                            toSet = Utils.FromColor(Utils.greyScale(frameBuffer[xPos, yPos]));
+                            toSet = Utils.FromColor(Utils.greyScale(frameBuffer[xPos, yPos]), pallet);
                         }
                         else
                         {
-                            toSet = Utils.FromColor(frameBuffer[xPos, yPos]);
+                            toSet = Utils.FromColor(frameBuffer[xPos, yPos], pallet);
                         }
 
                         if (toSet != current)

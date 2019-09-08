@@ -8,9 +8,9 @@ using System.Threading;
 
 namespace CRT
 {
-    class Utils
+    public class Utils
     {
-        public static ConsoleColor FromColor(Vec3 c)
+        public static ConsoleColor FromColor(Vec3 c, int pallet)
         {
             double max = Math.Max(c.x, Math.Max(c.y, c.z));
             if (max > 1)
@@ -22,13 +22,83 @@ namespace CRT
             int g = (int)(Math.Max(0.0, Math.Min(1, c.g())) * 255.0);
             int b = (int)(Math.Max(0.0, Math.Min(1, c.b())) * 255.0);
 
-            int index = (r > 128 | g > 128 | b > 128) ? 8 : 0; // Bright bit
+            Color color = Color.FromArgb(r, g, b);
 
-            index |= (r > 64) ? 4 : 0; // Red bit
-            index |= (g > 64) ? 2 : 0; // Green bit
-            index |= (b > 64) ? 1 : 0; // Blue bit
+            switch(pallet)
+            {
+                case 0:
+                    {
+                        int index = (r > 128 | g > 128 | b > 128) ? 8 : 0; // Bright bit
 
-            return (ConsoleColor)index;
+                        index |= (r > 64) ? 4 : 0; // Red bit
+                        index |= (g > 64) ? 2 : 0; // Green bit
+                        index |= (b > 64) ? 1 : 0; // Blue bit
+
+                        return (ConsoleColor)index;
+                    }
+                case 1:
+                    {
+                        if (color.GetSaturation() < 0.5)
+                        {
+                            // we have a grayish color
+                            switch ((int)(color.GetBrightness() * 3.5))
+                            {
+                                case 0: return ConsoleColor.Black;
+                                case 1: return ConsoleColor.DarkGray;
+                                case 2: return ConsoleColor.Gray;
+                                default: return ConsoleColor.White;
+                            }
+                        }
+                        int hue = (int)Math.Round(color.GetHue() / 60, MidpointRounding.AwayFromZero);
+                        if (color.GetBrightness() < 0.4)
+                        {
+                            // dark color
+                            switch (hue)
+                            {
+                                case 1: return ConsoleColor.DarkYellow;
+                                case 2: return ConsoleColor.DarkGreen;
+                                case 3: return ConsoleColor.DarkCyan;
+                                case 4: return ConsoleColor.DarkBlue;
+                                case 5: return ConsoleColor.DarkMagenta;
+                                default: return ConsoleColor.DarkRed;
+                            }
+                        }
+                        // bright color
+                        switch (hue)
+                        {
+                            case 1: return ConsoleColor.Yellow;
+                            case 2: return ConsoleColor.Green;
+                            case 3: return ConsoleColor.Cyan;
+                            case 4: return ConsoleColor.Blue;
+                            case 5: return ConsoleColor.Magenta;
+                            default: return ConsoleColor.Red;
+                        }
+                    }
+                case 2:
+                    {
+                        ConsoleColor ret = 0;
+                        double rr = r, gg = g, bb = b, delta = double.MaxValue;
+
+                        foreach (ConsoleColor cc in Enum.GetValues(typeof(ConsoleColor)))
+                        {
+                            var n = Enum.GetName(typeof(ConsoleColor), cc);
+                            var c1 = Color.FromName(n == "DarkYellow" ? "Orange" : n); // bug fix
+                            var t = Math.Pow(c1.R - rr, 2.0) + Math.Pow(c1.G - gg, 2.0) + Math.Pow(c1.B - bb, 2.0);
+                            if (t == 0.0)
+                                return cc;
+                            if (t < delta)
+                            {
+                                delta = t;
+                                ret = cc;
+                            }
+                        }
+                        return ret;
+                    }
+                default:
+                    {
+                        return ConsoleColor.Black;
+                    }
+            }
         }
 
         public static Vec3 greyScale(Vec3 v)
@@ -104,6 +174,45 @@ namespace CRT
         public static double rand(double min, double max)
         {
             return (rng.NextDouble() * (max - min) + min);
+        }
+
+        public static ConsoleColor GetConsoleColor(Color color)
+        {
+            if (color.GetSaturation() < 0.5)
+            {
+                // we have a grayish color
+                switch ((int)(color.GetBrightness() * 3.5))
+                {
+                    case 0: return ConsoleColor.Black;
+                    case 1: return ConsoleColor.DarkGray;
+                    case 2: return ConsoleColor.Gray;
+                    default: return ConsoleColor.White;
+                }
+            }
+            int hue = (int)Math.Round(color.GetHue() / 60, MidpointRounding.AwayFromZero);
+            if (color.GetBrightness() < 0.4)
+            {
+                // dark color
+                switch (hue)
+                {
+                    case 1: return ConsoleColor.DarkYellow;
+                    case 2: return ConsoleColor.DarkGreen;
+                    case 3: return ConsoleColor.DarkCyan;
+                    case 4: return ConsoleColor.DarkBlue;
+                    case 5: return ConsoleColor.DarkMagenta;
+                    default: return ConsoleColor.DarkRed;
+                }
+            }
+            // bright color
+            switch (hue)
+            {
+                case 1: return ConsoleColor.Yellow;
+                case 2: return ConsoleColor.Green;
+                case 3: return ConsoleColor.Cyan;
+                case 4: return ConsoleColor.Blue;
+                case 5: return ConsoleColor.Magenta;
+                default: return ConsoleColor.Red;
+            }
         }
     }
 }

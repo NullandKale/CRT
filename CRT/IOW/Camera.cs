@@ -57,24 +57,40 @@ namespace CRT.IOW
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.W))
             {
                 movement += (lookAt - origin) * speed;
+                movement.y = 0;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.S))
             {
                 movement -= (lookAt - origin) * speed;
+                movement.y = 0;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.D))
             {
                 movement -= Vec3.cross(vup, (lookAt - origin)) * speed;
+                movement.y = 0;
                 changed = true;
             }
 
             if (Program.input.IsKeyHeld(OpenTK.Input.Key.A))
             {
                 movement += Vec3.cross(vup, (lookAt - origin)) * speed;
+                movement.y = 0;
+                changed = true;
+            }
+
+            if (Program.input.IsKeyHeld(OpenTK.Input.Key.Q))
+            {
+                movement += vup * speed;
+                changed = true;
+            }
+
+            if (Program.input.IsKeyHeld(OpenTK.Input.Key.E))
+            {
+                movement -= vup * speed;
                 changed = true;
             }
 
@@ -116,23 +132,9 @@ namespace CRT.IOW
                 changed = true;
             }
 
-            if (Program.input.IsKeyHeld(OpenTK.Input.Key.Q))
-            {
-                vfov -= 1;
-                //rayTracer.maxDepth -= 1;
-                changed = true;
-            }
-
-            if (Program.input.IsKeyHeld(OpenTK.Input.Key.E))
-            {
-                vfov += 1;
-                //rayTracer.maxDepth += 1;
-                changed = true;
-            }
-
             if(Program.input.IsKeyRising(OpenTK.Input.Key.P))
             {
-                takeScreenshot("ScreenShot.bmp", this, rayTracer.world);
+                takeScreenshot("ScreenShot0.bmp", this, rayTracer.world);
             }
 
             if (changed)
@@ -156,7 +158,7 @@ namespace CRT.IOW
 
         public void takeScreenshot(string fileName, Camera camera, HitableList world)
         {
-            RayTracer rayTracer = new RayTracer(900, 1600, 2, 32, (int)camera.vfov, false, false);
+            RayTracer rayTracer = new RayTracer(600, 800, 4, 32, (int)camera.vfov, false);
             rayTracer.camera.origin = camera.origin;
             rayTracer.camera.lookAt = camera.lookAt;
             rayTracer.camera.updatePos();
