@@ -57,6 +57,21 @@ namespace CRT.IOW
             return x * x + y * y + z * z;
         }
 
+        public double getAt(int a)
+        {
+            switch(a)
+            {
+                case 0:
+                    return x;
+                case 1:
+                    return y;
+                case 2:
+                    return z;
+                default:
+                    return 0;
+            }
+        }
+
         public static Vec3 operator +(Vec3 v1, Vec3 v2)
         {
             return new Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);

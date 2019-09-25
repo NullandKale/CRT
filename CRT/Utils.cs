@@ -101,6 +101,16 @@ namespace CRT
             }
         }
 
+        public static double min(double a, double b)
+        {
+            return a < b ? a : b;
+        }
+
+        public static double max(double a, double b)
+        {
+            return a > b ? a : b;
+        }
+
         public static Vec3 greyScale(Vec3 v)
         {
             double avg = (v.x + v.y + v.z) / 3.0;
