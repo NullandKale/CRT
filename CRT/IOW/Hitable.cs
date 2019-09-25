@@ -160,15 +160,18 @@ namespace CRT.IOW
 
                     return true;
                 }
-                else if(hit_left)
+                else
                 {
-                    rec = leftRec;
-                    return true;
-                }
-                else if (hit_right)
-                {
-                    rec = rightRec;
-                    return true;
+                    if (hit_left)
+                    {
+                        rec = leftRec;
+                        return true;
+                    }
+                    else if (hit_right)
+                    {
+                        rec = rightRec;
+                        return true;
+                    }
                 }
             }
 
@@ -179,7 +182,7 @@ namespace CRT.IOW
     public class HitableList : Hitable
     {
         public List<Hitable> hitables;
-        public bvh_node bvh_root;
+        //public bvh_node bvh_root;
         
         private Hitable[] hitArray;
         public HitableList()
@@ -191,7 +194,7 @@ namespace CRT.IOW
         {
             hitables.Add(h);
             hitArray = hitables.ToArray();
-            bvh_root = new bvh_node(hitables, hitables.Count);
+            //bvh_root = new bvh_node(hitables, hitables.Count);
         }
 
         public bool boundingBox(ref aabb box)
@@ -229,6 +232,26 @@ namespace CRT.IOW
         }
 
         public bool hit(Ray r, double tMin, double tMax, ref HitRecord rec)
+        {
+            HitRecord tempRec = new HitRecord();
+            bool hitAnything = false;
+            double closestSoFar = tMax;
+
+            for (int i = 0; i < hitArray.Length; i++)
+            {
+                if (hitArray[i].hit(r, tMin, closestSoFar, ref tempRec))
+                {
+                    hitAnything = true;
+                    closestSoFar = tempRec.t;
+                    rec = tempRec;
+                }
+            }
+
+            return hitAnything;
+            //return hitBVH(r, tMin, tMax, ref rec);
+        }
+
+        public bool hitBVH(Ray r, double tMin, double tMax, ref HitRecord rec)
         {
             return bvh_root.hit(r, tMin, tMax, ref rec);
         }
