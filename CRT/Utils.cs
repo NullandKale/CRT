@@ -1,7 +1,9 @@
 ﻿using CRT.IOW;
+using ObjLoader.Loader.Loaders;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Numerics;
 using System.Text;
 using System.Threading;
@@ -223,6 +225,20 @@ namespace CRT
                 case 5: return ConsoleColor.Magenta;
                 default: return ConsoleColor.Red;
             }
+        }
+
+        private static IObjLoader objLoader;
+
+        public static LoadResult LoadOBJ(string filename)
+        {
+            if(objLoader != null)
+            {
+                var objloaderFactory = new ObjLoaderFactory();
+                objLoader = objloaderFactory.Create();
+            }
+
+            FileStream fileStream = new FileStream(filename, FileMode.Open);
+            return objLoader.Load(fileStream);
         }
     }
 }
