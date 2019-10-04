@@ -60,13 +60,15 @@ namespace CRT
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
 
-                Console.Write(string.Format("CRT Engine Test {0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
+                string renderInfo = string.Format("CRT Engine Test {0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
                                             + " FOV:" + rayTracer.camera.vfov
                                             + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin)
                                             + " D " + string.Format("{0:0.00}", rayTracer.drawTime.TotalMilliseconds)
                                             + "MS R " + string.Format("{0:0.00}", rayTracer.renderTime.TotalMilliseconds)
                                             + "MS U " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
-                                            + "MS                       ");
+                                            + "MS";
+                renderInfo = renderInfo.PadRight(width);
+                Console.Write(renderInfo);
                 stopwatch.Restart();
             }
         }
