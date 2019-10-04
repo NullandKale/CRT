@@ -18,7 +18,15 @@ namespace CRT.Engine
         {
             render = true;
             components = new Dictionary<string, Component>();
-            sphere = new Sphere(loc, radius, new MaterialData(MaterialPrefab.ivory, Utils.randomColor()));
+
+            if(Utils.rand() > 0.25)
+            {
+                sphere = new Sphere(loc, radius, new MaterialData(MaterialPrefab.ivory, Utils.randomColor()));
+            }
+            else
+            {
+                sphere = new Sphere(loc, radius, MaterialData.mirror);
+            }
         }
 
         public void AddComponent(Component c)

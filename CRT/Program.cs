@@ -83,7 +83,7 @@ namespace CRT
             {
                 for(int j = 0; j < balls; j++)
                 {
-                    Entity ball = new Entity(new Vec3(i, 1, j), 0.5);
+                    Entity ball = new Entity(new Vec3(i * 10, 1, j * 10), 5);
                     ball.AddComponent(new BounceComponent());
                     worldManager.addEntity(ball);
                 }
