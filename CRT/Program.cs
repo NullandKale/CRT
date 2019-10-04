@@ -1,4 +1,6 @@
-﻿using CRT.IOW;
+﻿using CRT.Engine;
+using CRT.Engine.Components;
+using CRT.IOW;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,47 +9,58 @@ namespace CRT
 {
     class Program
     {
+        //Dont change these values
         public static int height;
         public static int width;
-        public static InputManager input;
 
-        static void Main(string[] args)
+        //Managers
+        public static InputManager input;
+        public static RayTracer rayTracer;
+        public static WorldManager worldManager;
+
+        public static void Main(string[] args)
         {
-            runRayTracer();
-            //testRayTracer(true);
+            engineInit();
+            engineTestSetup();
+            engineStart();
         }
 
-        public static void runRayTracer()
+        public static void engineInit()
         {
             height = Console.WindowHeight - 1;
             width = Console.WindowWidth - 1;
+
             input = new InputManager();
-
-            RayTracer rayTracer = new RayTracer(height, width, 2, 8, 90, true);
+            rayTracer = new RayTracer(height, width, 1, 6, 90, true);
             rayTracer.camera.doUpdate = true;
+            worldManager = new WorldManager(400);
+        }
 
+        public static void engineStart()
+        {
             double averageFrameTime = 0;
             long frames = 0;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.Black;
+            worldManager.start();
+
+            Utils.resetConsoleColor();
 
             while (true)
             {
+                worldManager.update();
                 rayTracer.update(true);
                 rayTracer.renderDrawAsync(true, false);
                 input.Update();
 
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.BackgroundColor = ConsoleColor.Black;
+                Utils.resetConsoleColor();
 
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
 
-                Console.Write(string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
+                Console.Write(string.Format("CRT Engine Test {0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
                                             + " FOV:" + rayTracer.camera.vfov
                                             + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin)
                                             + " D " + string.Format("{0:0.00}", rayTracer.drawTime.TotalMilliseconds)
@@ -58,58 +71,24 @@ namespace CRT
             }
         }
 
-        public static void testRayTracer(bool doBenchmark)
+        public static void engineTestSetup()
         {
-            height = Console.WindowHeight - 1;
-            width = Console.WindowWidth - 1;
-            input = new InputManager();
+            Entity pc = new Entity(new Vec3(0, 0, 0), 0);
+            pc.AddComponent(new CameraComponent());
+            worldManager.addEntity(pc);
 
-            RayTracer rayTracer = new RayTracer(height, width, 2, 8, 90, true);
-            rayTracer.camera.doUpdate = true;
+            int balls = 3;
 
-            double averageFrameTime = 0;
-            long frames = 0;
-
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            Stopwatch totalTime = new Stopwatch();
-            if (doBenchmark)
+            for(int i = 0; i < balls; i++)
             {
-                totalTime.Start();
-            }
-
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.Black;
-
-            while (true)
-            {
-                rayTracer.StartRender(true);
-                rayTracer.update(true);
-                
-                Console.SetCursorPosition(0, 0);
-
-                averageFrameTime += stopwatch.Elapsed.TotalSeconds;
-                frames++;
-
-                Console.Write(string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS" 
-                                            + " FOV:" + rayTracer.camera.vfov 
-                                            + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin) 
-                                            + " D " + string.Format("{0:0.00}", rayTracer.drawTime.TotalMilliseconds) 
-                                            + "MS R " + string.Format("{0:0.00}", rayTracer.renderTime.TotalMilliseconds) 
-                                            + "MS U " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
-                                            + "MS                       ");
-                stopwatch.Restart();
-
-                if(doBenchmark && totalTime.Elapsed.TotalSeconds > 60)
+                for(int j = 0; j < balls; j++)
                 {
-                    Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n");
-                    Console.WriteLine("Benchmark Result: " + frames + " frames in " + totalTime.Elapsed.ToString() + string.Format(" AVG FPS: {0:0.00}", 1.0 / (averageFrameTime / frames)));
-                    Console.WriteLine("\nPress enter to continue");
-                    Console.ReadLine();
-                    totalTime.Reset();
+                    Entity ball = new Entity(new Vec3(i, 1, j), 0.5);
+                    ball.AddComponent(new BounceComponent());
+                    worldManager.addEntity(ball);
                 }
             }
+
         }
     }
 }

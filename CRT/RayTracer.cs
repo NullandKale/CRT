@@ -30,15 +30,7 @@ namespace CRT
         public List<Light> lights;
         public Camera camera;
 
-        public Sphere red;
-        public Sphere green;
-        public Sphere blue;
-
         private Random rng = new Random();
-
-        private bool dirR = true;
-        private bool dirG = true;
-        private bool dirB = true;
         private int pallet = 0;
         public RayTracer(int height, int width, int superSample, int maxDepth, int fov, bool consoleAspectFix)
         {
@@ -53,34 +45,15 @@ namespace CRT
 
             if (consoleAspectFix)
             {
-                camera = new Camera(new Vec3(-1, 1, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
+                camera = new Camera(new Vec3(-2, 1, -2), new Vec3(1, 1, 1), new Vec3(0, 1, 0), fov, (double)width / (double)(height * 2));
             }
             else
             {
-                camera = new Camera(new Vec3(-1, 1, 0), new Vec3(1, 1, 0), new Vec3(0, 1, 0), fov, (double)width / (double)height);
+                camera = new Camera(new Vec3(-2, 1, -2), new Vec3(1, 1, 1), new Vec3(0, 1, 0), fov, (double)width / (double)height);
             }
 
             lights = new List<Light>();
-            lights.Add(new Light(new Vec3(-20, 20,  12), 0.07));
-            lights.Add(new Light(new Vec3( 20, 50, -17), 0.15));
-            lights.Add(new Light(new Vec3( 30, 20,  22), 0.07));
-
-            red = new Sphere(new Vec3(0, rng.NextDouble() + 1, -1), 0.5, MaterialData.redRubber);
-            green = new Sphere(new Vec3(0, rng.NextDouble() + 1, 0), 0.5, MaterialData.greenRubber);
-            blue = new Sphere(new Vec3(0, rng.NextDouble() + 1, 1), 0.5, MaterialData.blueRubber);
-
-            world.add(new Sphere(new Vec3(  -6, 1,  8),  0.5, MaterialData.ivory));
-            world.add(new Sphere(new Vec3(  -5, 2,  8),  0.5, MaterialData.mirror));
-            world.add(new Sphere(new Vec3(-4.5, 1, 11), 0.75, MaterialData.redRubber));
-            world.add(new Sphere(new Vec3(  -4, 3, 10),  1.5, MaterialData.glass));
-
-            world.add(new Sphere(new Vec3(0, 3, -4), 2, MaterialData.mirror));
-            world.add(red);
-            world.add(green);
-            world.add(blue);
-            world.add(new Sphere(new Vec3(0, 3, 4), 2, MaterialData.mirror));
-
-            world.add(new Sphere(new Vec3(-7, -1000000, -18), 1000000, MaterialData.greenRubber));
+            lights.Add(new Light(new Vec3(0, 10000, 0), 1));
         }
 
         Vec3 Color(Ray r, Hitable world, int depth)
@@ -203,52 +176,6 @@ namespace CRT
         public void update(bool parallel)
         {
             timer.Restart();
-            camera.update(this);
-
-            if(red.center.y > 3)
-            {
-                dirR = false;
-            }
-
-            if (green.center.y > 3)
-            {
-                dirG = false;
-            }
-
-            if (blue.center.y > 3)
-            {
-                dirB = false;
-            }
-
-            if (red.center.y < 0)
-            {
-                dirR = true;
-            }
-
-            if (green.center.y < 0)
-            {
-                dirG = true;
-            }
-
-            if (blue.center.y < 0)
-            {
-                dirB = true;
-            }
-
-            double mult = 5;
-
-            red.center.y += dirR ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
-            green.center.y += dirG ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
-            blue.center.y += dirB ? rng.NextDouble() / mult : rng.NextDouble() / -mult;
-
-            if (Program.input.IsKeyFalling(OpenTK.Input.Key.R))
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    double height = Utils.rand(0, 5);
-                    world.add(new Sphere(new Vec3(Utils.rand(-10, 10), height, Utils.rand(-10, 10)), height * 0.5, new MaterialData(MaterialPrefab.rubber, Utils.randomColor())));
-                }
-            }
 
             if(Program.input.IsKeyFalling(OpenTK.Input.Key.Number0))
             {
@@ -264,7 +191,6 @@ namespace CRT
             {
                 pallet = 2;
             }
-
 
             timer.Stop();
             updateTime = timer.Elapsed;

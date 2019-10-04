@@ -7,7 +7,7 @@ namespace CRT.IOW
         public List<Hitable> hitables;
         //public bvh_node bvh_root;
         
-        private Hitable[] hitArray;
+        private Hitable[] hitArray = new Hitable[0];
         public HitableList()
         {
             hitables = new List<Hitable>();
@@ -18,6 +18,12 @@ namespace CRT.IOW
             hitables.Add(h);
             hitArray = hitables.ToArray();
             //bvh_root = new bvh_node(hitables, hitables.Count);
+        }
+
+        public void set(List<Hitable> list)
+        {
+            this.hitables = list;
+            this.hitArray = list.ToArray();
         }
 
         public bool boundingBox(ref aabb box)

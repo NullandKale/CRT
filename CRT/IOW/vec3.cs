@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace CRT.IOW
+namespace CRT
 {
     public struct Vec3
     {
@@ -70,6 +70,14 @@ namespace CRT.IOW
                 default:
                     return 0;
             }
+        }
+
+        public static double dist(Vec3 v1, Vec3 v2)
+        {
+            double dx = v1.x - v2.x;
+            double dy = v1.y - v2.y;
+            double dz = v1.z - v2.z;
+            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
         public static Vec3 operator +(Vec3 v1, Vec3 v2)

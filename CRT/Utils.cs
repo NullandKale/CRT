@@ -12,6 +12,12 @@ namespace CRT
 {
     public class Utils
     {
+        public static void resetConsoleColor()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
+
         public static ConsoleColor FromColor(Vec3 c, int pallet)
         {
             double max = Math.Max(c.x, Math.Max(c.y, c.z));
