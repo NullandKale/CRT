@@ -12,6 +12,7 @@ namespace CRT
         //Managers
         public static InputManager input;
         public static RayTracer rayTracer;
+        public static TileMapManager tileMapManager;
         public static WorldManager worldManager;
         public static FrameManager frameManager;
         public static UIManager uiManager;
@@ -36,6 +37,8 @@ namespace CRT
 
             frameManager = new FrameManager();
 
+            tileMapManager = new TileMapManager();
+
             uiManager = new UIManager();
             uiManager.AddMessage(new Message(0, 0, "no man was here. v0.0.1", ConsoleColor.White, ConsoleColor.Black), false);
 
@@ -47,6 +50,7 @@ namespace CRT
 
             worldManager = new WorldManager(200);
 
+            frameManager.addLayer(tileMapManager);
             frameManager.addLayer(rayTracer);
             frameManager.addLayer(uiManager);
         }
@@ -67,6 +71,7 @@ namespace CRT
             {
                 //these update orders matter
                 worldManager.Update();
+                tileMapManager.Update();
                 rayTracer.Update(true);
                 rayTracer.Render(true);
                 input.Update();

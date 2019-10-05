@@ -48,7 +48,10 @@ namespace CRT
         {
             for (int i = 0; i < layers.Count; i++)
             {
-                main = Frame.FlattenFromChexelProvider(layers[i], main);
+                if(layers[i].active())
+                {
+                    main = Frame.FlattenFromChexelProvider(layers[i], main);
+                }
             }
         }
 

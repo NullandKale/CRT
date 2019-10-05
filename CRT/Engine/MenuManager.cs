@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace CRT.Engine
 {
@@ -33,6 +34,14 @@ namespace CRT.Engine
             Program.rayTracer.isActive = true;
             Program.worldManager.isActive = true;
             Program.menuManager.isActive = false;
+            Program.tileMapManager.isActive = false;
+        }
+
+        public void exit()
+        {
+            Program.saveData.stop();
+            Thread.Sleep(200);
+            Environment.Exit(0);
         }
 
         public void activate2D()
@@ -40,6 +49,7 @@ namespace CRT.Engine
             Program.rayTracer.isActive = false;
             Program.worldManager.isActive = false;
             Program.menuManager.isActive = false;
+            Program.tileMapManager.isActive = true;
         }
 
         public void activateMenu()
@@ -47,6 +57,7 @@ namespace CRT.Engine
             Program.rayTracer.isActive = false;
             Program.worldManager.isActive = false;
             Program.menuManager.isActive = true;
+            Program.tileMapManager.isActive = false;
 
             currentMenu = new MainMenu();
             messages = new List<Message>();
@@ -125,6 +136,7 @@ namespace CRT.Engine
             {
                 "Start Game",
                 "Graphics Options",
+                "Back",
                 "Exit",
             };
         public string[] getMessages()
@@ -154,6 +166,11 @@ namespace CRT.Engine
                 case 2:
                     {
                         Program.menuManager.activate3D();
+                        break;
+                    }
+                case 3:
+                    {
+                        Program.menuManager.exit();
                         break;
                     }
             }
