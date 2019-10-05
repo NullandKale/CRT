@@ -9,7 +9,7 @@ namespace CRT.Engine
         public bool isActive = true;
         public int selected = 0;
         public bool wait = true;
-        public int waitFrames = 5;
+        public int waitFrames = 25;
         public int waitCounter = 0;
         public Menu currentMenu;
         List<Message> messages;
@@ -18,6 +18,14 @@ namespace CRT.Engine
         {
             currentMenu = new MainMenu();
             messages = new List<Message>();
+        }
+
+        public void setMenu(Menu toSet)
+        {
+            currentMenu = toSet;
+            wait = true;
+            waitCounter = 0;
+            selected = 0;
         }
 
         public void activate3D()
@@ -90,6 +98,8 @@ namespace CRT.Engine
                     if (Program.input.IsKeyRising(OpenTK.Input.Key.Space) || Program.input.IsKeyRising(OpenTK.Input.Key.Enter))
                     {
                         currentMenu.select(selected);
+                        wait = true;
+                        waitCounter = 0;
                     }
                 }
             }
