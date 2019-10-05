@@ -20,6 +20,8 @@ namespace CRT
 
         public static bool run = true;
 
+        public static int tick;
+
         public static void Main(string[] args)
         {
             engineInit();
@@ -112,7 +114,6 @@ namespace CRT
                     worldManager.addEntity(ball);
                 }
             }
-
         }
     }
 }
