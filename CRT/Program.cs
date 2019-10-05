@@ -9,14 +9,11 @@ namespace CRT
 {
     class Program
     {
-        //Dont change these values
-        public static int height;
-        public static int width;
-
         //Managers
         public static InputManager input;
         public static RayTracer rayTracer;
         public static WorldManager worldManager;
+        public static FrameManager frameManager;
 
         public static void Main(string[] args)
         {
@@ -27,11 +24,10 @@ namespace CRT
 
         public static void engineInit()
         {
-            height = Console.WindowHeight - 1;
-            width = Console.WindowWidth - 1;
-
+            frameManager = new FrameManager();
             input = new InputManager();
-            rayTracer = new RayTracer(height, width, 2, 6, 90, true);
+            rayTracer = new RayTracer(frameManager.height, frameManager.width, 2, 6, 90, true);
+            frameManager.addLayer(rayTracer);
             rayTracer.camera.doUpdate = true;
             worldManager = new WorldManager(400);
         }
@@ -50,11 +46,11 @@ namespace CRT
 
             while (true)
             {
-                worldManager.update();
-                rayTracer.update(true);
-                rayTracer.renderDrawAsync(true, false);
+                worldManager.Update();
+                rayTracer.Update(true);
+                rayTracer.Render(true);
                 input.Update();
-
+                frameManager.Draw();
                 Utils.resetConsoleColor();
 
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
@@ -63,11 +59,11 @@ namespace CRT
                 string renderInfo = string.Format("CRT Engine Test {0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
                                             + " FOV:" + rayTracer.camera.vfov
                                             + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin)
-                                            + " D " + string.Format("{0:0.00}", rayTracer.drawTime.TotalMilliseconds)
+                                            + " D " + string.Format("{0:0.00}", frameManager.drawTime.TotalMilliseconds)
                                             + "MS R " + string.Format("{0:0.00}", rayTracer.renderTime.TotalMilliseconds)
                                             + "MS U " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
                                             + "MS";
-                renderInfo = renderInfo.PadRight(width);
+                renderInfo = renderInfo.PadRight(frameManager.width);
                 Console.Write(renderInfo);
                 stopwatch.Restart();
             }

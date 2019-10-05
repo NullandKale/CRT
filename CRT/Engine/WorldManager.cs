@@ -52,7 +52,7 @@ namespace CRT.Engine
             isStarted = true;
         }
 
-        public void update()
+        public void Update()
         {
             for (int i = 0; i < entities.Count; i++)
             {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CRT
 {
-    public class RayTracer
+    public class RayTracer : ChexelProvider
     {
         public int height;
         public int width;
@@ -30,7 +30,6 @@ namespace CRT
         public List<Light> lights;
         public Camera camera;
 
-        private Random rng = new Random();
         private int pallet = 0;
         public RayTracer(int height, int width, int superSample, int maxDepth, int fov, bool consoleAspectFix)
         {
@@ -173,7 +172,7 @@ namespace CRT
             });
         }
 
-        public void update(bool parallel)
+        public void Update(bool parallel)
         {
             timer.Restart();
 
@@ -196,13 +195,7 @@ namespace CRT
             updateTime = timer.Elapsed;
         }
 
-        public void renderDrawAsync(bool parallel, bool greyScale)
-        {
-            StartRender(parallel);
-            Draw(greyScale);
-        }
-
-        public void StartRender(bool parallel)
+        public void Render(bool parallel)
         {
             timer.Restart();
 
@@ -221,7 +214,7 @@ namespace CRT
 
         public Bitmap CreateBitmap(string fileName, bool open, bool parallel)
         {
-            StartRender(parallel);
+            Render(parallel);
 
             Bitmap bitmap = new Bitmap(width, height);
 
@@ -245,52 +238,14 @@ namespace CRT
             return bitmap;
         }
 
-        public void Draw(bool greyScale)
+        public bool hasChexel(int x, int y)
         {
-            timer.Restart();
+            return (x >= 0 && x < width) && (y >= 0 && y < height);
+        }
 
-            Console.SetCursorPosition(0, 0);
-            ConsoleColor current = Console.BackgroundColor;
-
-            for (int y = 0; y < height; y++)
-            {
-                List<char> line = new List<char>();
-                for (int x = 0; x < width; x++)
-                {
-                    int xPos = x;
-                    int yPos = y;
-                    char toPrint = ' ';
-
-                    ConsoleColor toSet = ConsoleColor.Black;
-
-                    if ((xPos >= 0 && xPos < width) && (yPos >= 0 && yPos < height))
-                    {
-                        if(greyScale)
-                        {
-                            toSet = Utils.FromColor(Utils.greyScale(frameBuffer[xPos, yPos]), pallet);
-                        }
-                        else
-                        {
-                            toSet = Utils.FromColor(frameBuffer[xPos, yPos], pallet);
-                        }
-
-                        if (toSet != current)
-                        {
-                            Console.Write((char[])line.ToArray());
-                            line.Clear();
-                            Console.BackgroundColor = toSet;
-                            current = Console.BackgroundColor;
-                        }
-                    }
-
-                    line.Add(toPrint);
-                }
-
-                Console.WriteLine((char[])line.ToArray());
-            }
-
-            timer.Stop();
-            drawTime = timer.Elapsed;
+        public (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y)
+        {
+            return (ConsoleColor.White, Utils.FromColor(frameBuffer[x, y], pallet), ' ');
         }
     }
 }
