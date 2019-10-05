@@ -14,6 +14,7 @@ namespace CRT
         public static RayTracer rayTracer;
         public static WorldManager worldManager;
         public static FrameManager frameManager;
+        public static UIManager uiManager;
 
         public static void Main(string[] args)
         {
@@ -25,11 +26,19 @@ namespace CRT
         public static void engineInit()
         {
             frameManager = new FrameManager();
+
+            uiManager = new UIManager();
+            uiManager.AddMessage(new Message(0, 0, "no man was here.", ConsoleColor.White, ConsoleColor.Black), false);
+
             input = new InputManager();
+
             rayTracer = new RayTracer(frameManager.height, frameManager.width, 2, 6, 90, true);
-            frameManager.addLayer(rayTracer);
             rayTracer.camera.doUpdate = true;
+
             worldManager = new WorldManager(400);
+
+            frameManager.addLayer(rayTracer);
+            frameManager.addLayer(uiManager);
         }
 
         public static void engineStart()
@@ -46,12 +55,13 @@ namespace CRT
 
             while (true)
             {
+                //these update orders matter
                 worldManager.Update();
                 rayTracer.Update(true);
                 rayTracer.Render(true);
                 input.Update();
                 frameManager.Draw();
-                Utils.resetConsoleColor();
+                uiManager.Update();
 
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
@@ -63,8 +73,7 @@ namespace CRT
                                             + "MS R " + string.Format("{0:0.00}", rayTracer.renderTime.TotalMilliseconds)
                                             + "MS U " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
                                             + "MS";
-                renderInfo = renderInfo.PadRight(frameManager.width);
-                Console.Write(renderInfo);
+                uiManager.AddMessage(new Message(0, frameManager.height - 1, renderInfo, ConsoleColor.White, ConsoleColor.Black), true);
                 stopwatch.Restart();
             }
         }

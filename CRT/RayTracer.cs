@@ -16,6 +16,7 @@ namespace CRT
         public int width;
         public int superSample;
         public int maxDepth;
+        public bool isActive = true;
 
         private Stopwatch timer = new Stopwatch();
         public TimeSpan updateTime;
@@ -246,6 +247,11 @@ namespace CRT
         public (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y)
         {
             return (ConsoleColor.White, Utils.FromColor(frameBuffer[x, y], pallet), ' ');
+        }
+
+        public bool active()
+        {
+            return isActive;
         }
     }
 }

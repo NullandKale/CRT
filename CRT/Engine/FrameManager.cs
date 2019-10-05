@@ -110,6 +110,7 @@ namespace CRT
     }
     public interface ChexelProvider
     {
+        bool active();
         bool hasChexel(int x, int y);
         (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y);
     }
@@ -120,6 +121,7 @@ namespace CRT
         public int height;
         public int xOffset;
         public int yOffset;
+        public bool isActive;
 
         public ConsoleColor[,] background;
         public ConsoleColor[,] forground;
@@ -136,7 +138,9 @@ namespace CRT
             forground = new ConsoleColor[width,height];
             text = new char[width,height];
 
-            for(int i = xOffset; i < width + xOffset; i++)
+            isActive = true;
+
+            for (int i = xOffset; i < width + xOffset; i++)
             {
                 for (int j = yOffset; j < height + yOffset; j++)
                 {
@@ -229,6 +233,11 @@ namespace CRT
             }
 
             return toReturn;
+        }
+
+        public bool active()
+        {
+            return isActive;
         }
     }
 }
