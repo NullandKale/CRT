@@ -139,7 +139,6 @@ namespace CRT.Engine
                 "Graphics Options",
                 "Back",
                 "Exit",
-                "Test2D",
             };
         public string[] getMessages()
         {
@@ -173,11 +172,6 @@ namespace CRT.Engine
                 case 3:
                     {
                         Program.menuManager.exit();
-                        break;
-                    }
-                case 4:
-                    {
-                        Program.menuManager.activate2D(0, MapType.Overworld);
                         break;
                     }
             }
