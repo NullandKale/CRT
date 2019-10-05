@@ -21,7 +21,7 @@ namespace CRT.Engine
 
             if(Utils.rand() > 0.25)
             {
-                sphere = new Sphere(loc, radius, new MaterialData(MaterialPrefab.rubber, Utils.randomColor()));
+                sphere = new Sphere(loc, radius, new MaterialData(MaterialPrefab.ivory, Utils.randomColor()));
             }
             else
             {

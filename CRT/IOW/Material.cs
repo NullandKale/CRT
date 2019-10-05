@@ -87,8 +87,6 @@ namespace CRT.IOW
                     this.a3 = 0.0;
                     break;
             }
-
-
         }
     }
 }

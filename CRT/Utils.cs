@@ -150,7 +150,8 @@ namespace CRT
             switch (val)
             {
                 case 0:
-                    return new Vec3(0, 0, 0);
+                    // make this not black against the black background
+                    return new Vec3(0.2, 0.2, 0.2);
                 case 1:
                     return new Vec3(0, 0, 1);
                 case 2:
