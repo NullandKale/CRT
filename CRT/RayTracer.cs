@@ -253,9 +253,9 @@ namespace CRT
             return (x >= 0 && x < width) && (y >= 0 && y < height);
         }
 
-        public (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y)
+        public Chexel getChexel(int x, int y)
         {
-            return (ConsoleColor.White, Utils.FromColor(frameBuffer[x, y], pallet), ' ');
+            return new Chexel(ConsoleColor.White, Utils.FromColor(frameBuffer[x, y], pallet), ' ');
         }
 
         public bool active()

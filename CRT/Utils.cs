@@ -289,4 +289,155 @@ namespace CRT
             return 0;
         }
     }
+
+    public class Chexel
+    {
+        public char t;
+        public ConsoleColor f;
+        public ConsoleColor b;
+
+        public Chexel()
+        {
+            this.f = ConsoleColor.White;
+            this.b = ConsoleColor.Black;
+            this.t = ' ';
+        }
+
+        public Chexel(ConsoleColor f, ConsoleColor b, char t)
+        {
+            this.f = f;
+            this.b = b;
+            this.t = t;
+        }
+    }
+
+    public struct vector2
+    {
+        public static readonly vector2 zero = new vector2();
+        public static readonly vector2 up = new vector2(0, -1);
+        public static readonly vector2 down = new vector2(0, 1);
+        public static readonly vector2 left = new vector2(-1, 0);
+        public static readonly vector2 right = new vector2(1, 0);
+
+        public int x;
+        public int y;
+
+        public vector2(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        public string toString()
+        {
+            return x + "," + y;
+        }
+
+        public static vector2 fromString(string a, string b)
+        {
+            int x;
+            int y;
+
+            if (!int.TryParse(a, out x))
+            {
+                x = -1;
+            }
+
+            if (!int.TryParse(b, out y))
+            {
+                y = -1;
+            }
+
+            return new vector2(x, y);
+        }
+
+        public static vector2 fromString(string line)
+        {
+            string[] lines = line.Split(',');
+
+            int x;
+            int y;
+
+            if (!int.TryParse(lines[0], out x))
+            {
+                x = -1;
+            }
+
+            if (!int.TryParse(lines[1], out y))
+            {
+                y = -1;
+            }
+
+            return new vector2(x, y);
+        }
+
+        public int toInt(int width)
+        {
+            return y * width + x;
+        }
+
+        public float dist(vector2 other)
+        {
+            return (float)Math.Sqrt(Math.Pow(x - other.x, 2) + Math.Pow(y - other.y, 2));
+        }
+
+        public bool Equals(vector2 X, vector2 Y)
+        {
+            if (X.x == Y.x && X.y == Y.y)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.x << 16 + (short)this.y;
+        }
+
+        public static vector2 add(vector2 a, vector2 b)
+        {
+            return new vector2(a.x + b.x, a.y + b.y);
+        }
+
+        public static vector2 sub(vector2 a, vector2 b)
+        {
+            return new vector2(a.x - b.x, a.y - b.y);
+        }
+
+        public static vector2 negate(vector2 a)
+        {
+            return new vector2(-a.x, -a.y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is vector2 vector &&
+                   x == vector.x &&
+                   y == vector.y;
+        }
+    }
+
+    public class vector2HashCode : IEqualityComparer<vector2>
+    {
+        public bool Equals(vector2 X, vector2 Y)
+        {
+            if (X.x == Y.x && X.y == Y.y)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public int GetHashCode(vector2 obj)
+        {
+            return obj.x << 16 + (short)obj.y;
+        }
+    }
 }

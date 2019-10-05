@@ -39,7 +39,7 @@ namespace CRT
             {
                 for (int j = 0; j < height; j++)
                 {
-                    main.setChexel(i, j, (ConsoleColor.White, ConsoleColor.Black, ' '));
+                    main.setChexel(i, j, new Chexel());
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace CRT
 
                     if ((x >= 0 && x < width) && (y >= 0 && y < height))
                     {
-                        (ConsoleColor f, ConsoleColor b, char t) chexel = main.getChexel(x, y);
+                        Chexel chexel = main.getChexel(x, y);
 
                         bToSet = chexel.b;
                         fToSet = chexel.f;
@@ -115,7 +115,7 @@ namespace CRT
     {
         bool active();
         bool hasChexel(int x, int y);
-        (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y);
+        Chexel getChexel(int x, int y);
     }
 
     public struct Frame : ChexelProvider
@@ -147,7 +147,7 @@ namespace CRT
             {
                 for (int j = yOffset; j < height + yOffset; j++)
                 {
-                    setChexel(i, j, (ConsoleColor.White, ConsoleColor.Black, ' '));
+                    setChexel(i, j, new Chexel());
                 }
             }
         }
@@ -157,15 +157,20 @@ namespace CRT
             return (x >= xOffset && x < width + xOffset) && (y >= yOffset && y < height + yOffset);
         }
 
-        public (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y)
+        public Chexel getChexel(int x, int y)
         {
+            if(!hasChexel(x,y))
+            {
+                return new Chexel();
+            }
+
             x -= xOffset;
             y -= yOffset;
 
-            return (forground[x, y], background[x, y], text[x, y]);
+            return new Chexel(forground[x, y], background[x, y], text[x, y]);
         }
 
-        public void setChexel(int x, int y, (ConsoleColor f, ConsoleColor b, char t) chexel)
+        public void setChexel(int x, int y, Chexel chexel)
         {
             if(hasChexel(x,y))
             {
@@ -186,7 +191,7 @@ namespace CRT
             {
                 for (int y = 0; y < yMax; y++)
                 {
-                    (ConsoleColor f, ConsoleColor b, char t) toSet = (ConsoleColor.White, ConsoleColor.Black, ' ');
+                    Chexel toSet = new Chexel();
 
                     if (top.hasChexel(x, y))
                     {
@@ -220,7 +225,7 @@ namespace CRT
             {
                 for (int y = 0; y < yMax; y++)
                 {
-                    (ConsoleColor f, ConsoleColor b, char t) toSet = (ConsoleColor.White, ConsoleColor.Black, ' ');
+                    Chexel toSet = new Chexel();
 
                     if (top.hasChexel(x, y))
                     {

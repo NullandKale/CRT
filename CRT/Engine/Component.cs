@@ -15,4 +15,16 @@ namespace CRT.Engine
         string saveString();
         void loadString(string toLoad);
     }
+
+    public interface ChexelComponent
+    {
+        void start(ChexelEntity e);
+        void updateBegin();
+        void update();
+        void updateEnd();
+        void stop();
+
+        string saveString();
+        void loadString(string toLoad);
+    }
 }

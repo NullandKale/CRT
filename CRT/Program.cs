@@ -1,4 +1,5 @@
 ﻿using CRT.Engine;
+using CRT.Engine.ChexelComponents;
 using CRT.Engine.Components;
 using CRT.IOW;
 using System;
@@ -20,6 +21,7 @@ namespace CRT
         public static SaveDataManager saveData;
 
         public static bool run = true;
+        public static int tick = 0;
 
         public static void Main(string[] args)
         {
@@ -64,11 +66,13 @@ namespace CRT
             stopwatch.Start();
 
             worldManager.start();
+            tileMapManager.start();
 
             Utils.resetConsoleColor();
 
             while (run)
             {
+                tick++;
                 //these update orders matter
                 worldManager.Update();
                 tileMapManager.Update();
@@ -117,6 +121,10 @@ namespace CRT
                     worldManager.addEntity(ball);
                 }
             }
+
+            ChexelEntity pcT = new ChexelEntity(new vector2(10, 10), ConsoleColor.White, '@');
+            pcT.AddComponent(new CameraCComponent());
+            tileMapManager.addEntity(pcT);
 
         }
     }

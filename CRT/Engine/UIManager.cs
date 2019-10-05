@@ -72,7 +72,7 @@ namespace CRT.Engine
             return false;
         }
 
-        public (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y)
+        public Chexel getChexel(int x, int y)
         {
             for(int i = 0; i < messages.Count; i++)
             {
@@ -90,7 +90,7 @@ namespace CRT.Engine
                 }
             }
 
-            return (ConsoleColor.White, ConsoleColor.Black, ' ');
+            return new Chexel();
         }
 
         public bool active()
@@ -122,9 +122,9 @@ namespace CRT.Engine
             return isActive;
         }
 
-        public (ConsoleColor f, ConsoleColor b, char t) getChexel(int x, int y)
+        public Chexel getChexel(int x, int y)
         {
-            return (f, b, m[x - this.x]);
+            return new Chexel(f, b, m[x - this.x]);
         }
 
         public bool hasChexel(int x, int y)

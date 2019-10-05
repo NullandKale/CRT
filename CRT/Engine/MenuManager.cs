@@ -44,11 +44,12 @@ namespace CRT.Engine
             Environment.Exit(0);
         }
 
-        public void activate2D()
+        public void activate2D(int planetNumber, MapType mapType)
         {
             Program.rayTracer.isActive = false;
             Program.worldManager.isActive = false;
             Program.menuManager.isActive = false;
+            Program.tileMapManager.generatePlanet(planetNumber, mapType);
             Program.tileMapManager.isActive = true;
         }
 
@@ -138,6 +139,7 @@ namespace CRT.Engine
                 "Graphics Options",
                 "Back",
                 "Exit",
+                "Test2D",
             };
         public string[] getMessages()
         {
@@ -171,6 +173,11 @@ namespace CRT.Engine
                 case 3:
                     {
                         Program.menuManager.exit();
+                        break;
+                    }
+                case 4:
+                    {
+                        Program.menuManager.activate2D(0, MapType.Overworld);
                         break;
                     }
             }

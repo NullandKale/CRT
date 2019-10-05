@@ -6,18 +6,66 @@ namespace CRT.Engine
 {
     public class ChexelEntity
     {
-        public int xPos;
-        public int yPos;
+        public vector2 pos;
         public bool isActive = true;
         public ConsoleColor f;
         public char t;
 
-        public ChexelEntity(int xPos, int yPos, ConsoleColor f, char t)
+        public Dictionary<string, ChexelComponent> components;
+
+        public ChexelEntity(vector2 pos, ConsoleColor f, char t)
         {
-            this.xPos = xPos;
-            this.yPos = yPos;
+            this.pos = pos;
             this.f = f;
             this.t = t;
+            components = new Dictionary<string, ChexelComponent>();
+        }
+        public void AddComponent(ChexelComponent c)
+        {
+            if (!components.ContainsValue(c))
+            {
+                components.Add(c.GetType().ToString(), c);
+            }
+        }
+
+        public void start()
+        {
+            foreach (ChexelComponent c in components.Values)
+            {
+                c.start(this);
+            }
+        }
+
+        public void stop()
+        {
+            foreach (ChexelComponent c in components.Values)
+            {
+                c.stop();
+            }
+        }
+
+        public void updateBegin()
+        {
+            foreach (ChexelComponent c in components.Values)
+            {
+                c.updateBegin();
+            }
+        }
+
+        public void update()
+        {
+            foreach (ChexelComponent c in components.Values)
+            {
+                c.update();
+            }
+        }
+
+        public void updateEnd()
+        {
+            foreach (ChexelComponent c in components.Values)
+            {
+                c.updateEnd();
+            }
         }
     }
 }
