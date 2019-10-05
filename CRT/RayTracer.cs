@@ -222,6 +222,7 @@ namespace CRT
 
         public Bitmap CreateBitmap(string fileName, bool open, bool parallel)
         {
+            isActive = true;
             Render(parallel);
 
             Bitmap bitmap = new Bitmap(width, height);
@@ -243,6 +244,7 @@ namespace CRT
                 Process.Start(@"cmd.exe ", @"/c " + fileName);
             }
 
+            isActive = false;
             return bitmap;
         }
 
