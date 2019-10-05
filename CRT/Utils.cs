@@ -143,7 +143,9 @@ namespace CRT
 
         public static Vec3 randomColor()
         {
-            int val = rng.Next(0, 14);
+            int val = rng.Next(0, 7);
+            //TODO fix colors after 7
+            //int val = 8;
 
             switch (val)
             {
@@ -164,7 +166,7 @@ namespace CRT
                 case 7:
                     return new Vec3(1, 1, 1);
                 case 8:
-                    return new Vec3(0.5, 0.5, 1);
+                    return new Vec3(0.25, 0.25, 1);
                 case 9:
                     return new Vec3(0.5, 1, 0.5);
                 case 10:
