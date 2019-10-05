@@ -240,7 +240,7 @@ namespace CRT
 
         public static LoadResult LoadOBJ(string filename)
         {
-            if(objLoader != null)
+            if (objLoader != null)
             {
                 var objloaderFactory = new ObjLoaderFactory();
                 objLoader = objloaderFactory.Create();

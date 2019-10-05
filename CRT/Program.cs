@@ -15,6 +15,7 @@ namespace CRT
         public static WorldManager worldManager;
         public static FrameManager frameManager;
         public static UIManager uiManager;
+        public static SaveDataManager saveData;
 
         public static void Main(string[] args)
         {
@@ -25,6 +26,9 @@ namespace CRT
 
         public static void engineInit()
         {
+            //savedata should start first
+            saveData = new SaveDataManager();
+
             frameManager = new FrameManager();
 
             uiManager = new UIManager();
@@ -36,7 +40,7 @@ namespace CRT
             rayTracer.camera.doUpdate = true;
             rayTracer.ambientLight = 0.075;
 
-            worldManager = new WorldManager(400);
+            worldManager = new WorldManager(200);
 
             frameManager.addLayer(rayTracer);
             frameManager.addLayer(uiManager);
@@ -46,6 +50,7 @@ namespace CRT
         {
             double averageFrameTime = 0;
             long frames = 0;
+            bool run = true;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -54,7 +59,7 @@ namespace CRT
 
             Utils.resetConsoleColor();
 
-            while (true)
+            while (run)
             {
                 //these update orders matter
                 worldManager.Update();
@@ -76,7 +81,14 @@ namespace CRT
                                             + "MS";
                 uiManager.AddMessage(new Message(0, frameManager.height - 1, renderInfo, ConsoleColor.White, ConsoleColor.Black), true);
                 stopwatch.Restart();
+
+                if(input.IsKeyFalling(OpenTK.Input.Key.Escape))
+                {
+                    run = false;
+                }
             }
+
+            saveData.stop();
         }
 
         public static void engineTestSetup()
