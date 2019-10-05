@@ -28,12 +28,13 @@ namespace CRT
             frameManager = new FrameManager();
 
             uiManager = new UIManager();
-            uiManager.AddMessage(new Message(0, 0, "no man was here.", ConsoleColor.White, ConsoleColor.Black), false);
+            uiManager.AddMessage(new Message(0, 0, "no man was here. v0.0.1", ConsoleColor.White, ConsoleColor.Black), false);
 
             input = new InputManager();
 
             rayTracer = new RayTracer(frameManager.height, frameManager.width, 2, 6, 90, true);
             rayTracer.camera.doUpdate = true;
+            rayTracer.ambientLight = 0.075;
 
             worldManager = new WorldManager(400);
 
@@ -66,7 +67,7 @@ namespace CRT
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
 
-                string renderInfo = string.Format("CRT Engine Test {0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
+                string renderInfo = string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
                                             + " FOV:" + rayTracer.camera.vfov
                                             + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin)
                                             + " D " + string.Format("{0:0.00}", frameManager.drawTime.TotalMilliseconds)

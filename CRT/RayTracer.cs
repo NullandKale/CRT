@@ -30,6 +30,7 @@ namespace CRT
         public HitableList world;
         public List<Light> lights;
         public Camera camera;
+        public double ambientLight = 0;
 
         private int pallet = 0;
         public RayTracer(int height, int width, int superSample, int maxDepth, int fov, bool consoleAspectFix)
@@ -87,8 +88,8 @@ namespace CRT
 
             refractColor = Color(new Ray(rec.p, refractDir), world, depth + 1);
 
-            double diffuseLightIntensity = 0.075;
-            double specularLightIntensity = 0.075;
+            double diffuseLightIntensity = ambientLight;
+            double specularLightIntensity = 0;
 
             for(int i = 0; i < lights.Count; i++)
             {
