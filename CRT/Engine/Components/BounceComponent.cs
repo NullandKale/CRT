@@ -7,8 +7,8 @@ namespace CRT.Engine.Components
     public class BounceComponent : Component
     {
         double minY = -2;
-        double maxY = 1;
-        double speed = Utils.rand() * 0.1;
+        double maxY = 4;
+        double speed = Utils.rand() * 0.2;
         bool goingUp = true;
         Entity entity;
 

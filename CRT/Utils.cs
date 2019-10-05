@@ -164,19 +164,19 @@ namespace CRT
                 case 7:
                     return new Vec3(1, 1, 1);
                 case 8:
-                    return new Vec3(0, 0, 0.5);
+                    return new Vec3(0.5, 0.5, 1);
                 case 9:
-                    return new Vec3(0, 0.5, 0);
+                    return new Vec3(0.5, 1, 0.5);
                 case 10:
-                    return new Vec3(0, 0.5, 0.5);
+                    return new Vec3(0.5, 1, 1);
                 case 11:
-                    return new Vec3(0.5, 0, 0);
+                    return new Vec3(1, 0.5, 0.5);
                 case 12:
-                    return new Vec3(0.5, 0, 0.5);
+                    return new Vec3(1, 0.5, 1);
                 case 13:
-                    return new Vec3(0.5, 0.5, 0);
+                    return new Vec3(1, 1, 0.5);
                 case 14:
-                    return new Vec3(0.5, 0.5, 0.5);
+                    return new Vec3(1, 1, 1);
             }
 
             return new Vec3(0, 0, 0);

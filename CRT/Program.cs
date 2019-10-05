@@ -31,7 +31,7 @@ namespace CRT
             width = Console.WindowWidth - 1;
 
             input = new InputManager();
-            rayTracer = new RayTracer(height, width, 1, 6, 90, true);
+            rayTracer = new RayTracer(height, width, 2, 6, 90, true);
             rayTracer.camera.doUpdate = true;
             worldManager = new WorldManager(400);
         }
@@ -85,7 +85,7 @@ namespace CRT
             {
                 for(int j = 0; j < balls; j++)
                 {
-                    Entity ball = new Entity(new Vec3(i * 10, 1, j * 10), 5);
+                    Entity ball = new Entity(new Vec3(i * 10, 1, j * 10), 4.5);
                     ball.AddComponent(new BounceComponent());
                     worldManager.addEntity(ball);
                 }

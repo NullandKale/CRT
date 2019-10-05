@@ -22,7 +22,7 @@ namespace CRT
         public TimeSpan renderTime;
         public TimeSpan drawTime;
 
-        public Vec3 backgroundColor = new Vec3(0, 0.25, 1);
+        public Vec3 backgroundColor = new Vec3(0, 0, 0);
         public Vec3 depthColor = new Vec3(1, 1, 1);
 
         public Vec3[,] frameBuffer;
@@ -53,7 +53,7 @@ namespace CRT
             }
 
             lights = new List<Light>();
-            lights.Add(new Light(new Vec3(0, 10000, 0), 1));
+            lights.Add(new Light(new Vec3(0, 10000, 0), 0.25));
         }
 
         Vec3 Color(Ray r, Hitable world, int depth)
@@ -87,8 +87,8 @@ namespace CRT
 
             refractColor = Color(new Ray(rec.p, refractDir), world, depth + 1);
 
-            double diffuseLightIntensity = 0.05;
-            double specularLightIntensity = 0;
+            double diffuseLightIntensity = 0.075;
+            double specularLightIntensity = 0.075;
 
             for(int i = 0; i < lights.Count; i++)
             {
