@@ -249,5 +249,44 @@ namespace CRT
             FileStream fileStream = new FileStream(filename, FileMode.Open);
             return objLoader.Load(fileStream);
         }
+
+        public static int GetIntFromConsole(string message)
+        {
+            Console.SetCursorPosition(0, 0);
+            resetConsoleColor();
+            for(int i = 0; i < Program.frameManager.height; i++)
+            {
+                Console.WriteLine("".PadRight(Program.frameManager.width));
+            }
+
+            while (Console.KeyAvailable)
+            {
+                Console.ReadKey(false);
+            }
+
+            string input = "";
+            bool notValid = true;
+
+            while(notValid)
+            {
+                Console.SetCursorPosition(Program.frameManager.width / 2 - message.Length / 2, Program.frameManager.height / 2 - 1);
+                Console.Write(message);
+                Console.SetCursorPosition(Program.frameManager.width / 2 - message.Length / 2, Program.frameManager.height / 2);
+                input = Console.ReadLine();
+
+                int toReturn = 0;
+
+                if(int.TryParse(input, out toReturn))
+                {
+                    return toReturn;
+                }
+                else
+                {
+                    Console.Write("You must enter an integer");
+                }
+            }
+
+            return 0;
+        }
     }
 }

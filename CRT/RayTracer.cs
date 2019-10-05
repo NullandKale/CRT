@@ -16,7 +16,7 @@ namespace CRT
         public int width;
         public int superSample;
         public int maxDepth;
-        public bool isActive = true;
+        public bool isActive = false;
 
         private Stopwatch timer = new Stopwatch();
         public TimeSpan updateTime;
@@ -176,42 +176,48 @@ namespace CRT
 
         public void Update(bool parallel)
         {
-            timer.Restart();
-
-            if(Program.input.IsKeyFalling(OpenTK.Input.Key.Number0))
+            if(isActive)
             {
-                pallet = 0;
-            }
+                timer.Restart();
 
-            if (Program.input.IsKeyFalling(OpenTK.Input.Key.Number1))
-            {
-                pallet = 1;
-            }
+                if (Program.input.IsKeyFalling(OpenTK.Input.Key.Number0))
+                {
+                    pallet = 0;
+                }
 
-            if (Program.input.IsKeyFalling(OpenTK.Input.Key.Number2))
-            {
-                pallet = 2;
-            }
+                if (Program.input.IsKeyFalling(OpenTK.Input.Key.Number1))
+                {
+                    pallet = 1;
+                }
 
-            timer.Stop();
-            updateTime = timer.Elapsed;
+                if (Program.input.IsKeyFalling(OpenTK.Input.Key.Number2))
+                {
+                    pallet = 2;
+                }
+
+                timer.Stop();
+                updateTime = timer.Elapsed;
+            }
         }
 
         public void Render(bool parallel)
         {
-            timer.Restart();
-
-            if (parallel)
+            if(isActive)
             {
-                GenerateFrameParallel();
-            }
-            else
-            {
-                GenerateFrame();
-            }
+                timer.Restart();
 
-            timer.Stop();
-            renderTime = timer.Elapsed;
+                if (parallel)
+                {
+                    GenerateFrameParallel();
+                }
+                else
+                {
+                    GenerateFrame();
+                }
+
+                timer.Stop();
+                renderTime = timer.Elapsed;
+            }
         }
 
         public Bitmap CreateBitmap(string fileName, bool open, bool parallel)

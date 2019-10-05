@@ -26,6 +26,18 @@ namespace CRT.Engine
                 messages.Add(toAdd);
             }
         }
+
+        public void AddMessages(List<Message> toAdd, bool ephemeral)
+        {
+            if (ephemeral)
+            {
+                ephemeralMessages.AddRange(toAdd);
+            }
+            else
+            {
+                messages.AddRange(toAdd);
+            }
+        }
         public void RemoveMessage(Message toRemove)
         {
             if(messages.Contains(toRemove))

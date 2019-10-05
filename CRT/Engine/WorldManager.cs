@@ -11,6 +11,7 @@ namespace CRT.Engine
         public Vec3 cameraPos;
         public Vec3 cameraLook;
         public bool cameraUpdate = false;
+        public bool isActive = false;
 
         public bool isStarted = false;
 
@@ -54,23 +55,33 @@ namespace CRT.Engine
 
         public void Update()
         {
-            for (int i = 0; i < entities.Count; i++)
+            if(isActive)
             {
-                entities[i].updateBegin();
-                if(entities[i].distUpdate)
+                bool needsSort = false;
+                for (int i = 0; i < entities.Count; i++)
+                {
+                    entities[i].updateBegin();
+                }
+
+                for (int i = 0; i < entities.Count; i++)
+                {
+                    entities[i].update();
+                }
+
+                for (int i = 0; i < entities.Count; i++)
+                {
+                    entities[i].updateEnd();
+
+                    if (entities[i].distUpdate)
+                    {
+                        needsSort = true;
+                    }
+                }
+
+                if(needsSort)
                 {
                     SortEntities();
                 }
-            }
-
-            for (int i = 0; i < entities.Count; i++)
-            {
-                entities[i].update();
-            }
-
-            for (int i = 0; i < entities.Count; i++)
-            {
-                entities[i].updateEnd();
             }
         }
 

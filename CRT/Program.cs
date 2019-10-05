@@ -15,7 +15,10 @@ namespace CRT
         public static WorldManager worldManager;
         public static FrameManager frameManager;
         public static UIManager uiManager;
+        public static MenuManager menuManager;
         public static SaveDataManager saveData;
+
+        public static bool run = true;
 
         public static void Main(string[] args)
         {
@@ -28,6 +31,8 @@ namespace CRT
         {
             //savedata should start first
             saveData = new SaveDataManager();
+
+            menuManager = new MenuManager();
 
             frameManager = new FrameManager();
 
@@ -50,7 +55,6 @@ namespace CRT
         {
             double averageFrameTime = 0;
             long frames = 0;
-            bool run = true;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -68,13 +72,13 @@ namespace CRT
                 input.Update();
                 frameManager.Draw();
                 uiManager.Update();
+                menuManager.update();
 
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
 
                 string renderInfo = string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
-                                            + " FOV:" + rayTracer.camera.vfov
-                                            + " POS " + rayTracer.camera.origin.ToString() + " " + (rayTracer.camera.lookAt - rayTracer.camera.origin)
+                                            + " POS " + rayTracer.camera.origin.ToString()
                                             + " D " + string.Format("{0:0.00}", frameManager.drawTime.TotalMilliseconds)
                                             + "MS R " + string.Format("{0:0.00}", rayTracer.renderTime.TotalMilliseconds)
                                             + "MS U " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
@@ -84,7 +88,7 @@ namespace CRT
 
                 if(input.IsKeyFalling(OpenTK.Input.Key.Escape))
                 {
-                    run = false;
+                    menuManager.activateMenu();
                 }
             }
 
