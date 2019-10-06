@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\firstMap.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\GreyMap.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

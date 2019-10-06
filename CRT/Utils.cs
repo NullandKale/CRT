@@ -250,14 +250,19 @@ namespace CRT
             return objLoader.Load(fileStream);
         }
 
-        public static int GetIntFromConsole(string message)
+        public static void clearConsole()
         {
             Console.SetCursorPosition(0, 0);
             resetConsoleColor();
-            for(int i = 0; i < Program.frameManager.height; i++)
+            for (int i = 0; i < Program.frameManager.height; i++)
             {
                 Console.WriteLine("".PadRight(Program.frameManager.width));
             }
+        }
+
+        public static int GetIntFromConsole(string message)
+        {
+            clearConsole();
 
             while (Console.KeyAvailable)
             {

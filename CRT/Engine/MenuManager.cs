@@ -23,6 +23,8 @@ namespace CRT.Engine
 
         public void setMenu(Menu toSet)
         {
+            Utils.clearConsole();
+            messages.Clear();
             currentMenu = toSet;
             wait = true;
             waitCounter = 0;
@@ -31,6 +33,7 @@ namespace CRT.Engine
 
         public void activate3D()
         {
+            Utils.clearConsole();
             Program.rayTracer.isActive = true;
             Program.worldManager.isActive = true;
             Program.menuManager.isActive = false;
@@ -39,6 +42,7 @@ namespace CRT.Engine
 
         public void exit()
         {
+            Utils.clearConsole();
             Program.saveData.stop();
             Thread.Sleep(200);
             Environment.Exit(0);
@@ -46,24 +50,27 @@ namespace CRT.Engine
 
         public void activate2D(int planetNumber, MapType mapType)
         {
+            Utils.clearConsole();
             Program.rayTracer.isActive = false;
             Program.worldManager.isActive = false;
             Program.menuManager.isActive = false;
-            Program.tileMapManager.generatePlanet(planetNumber, mapType);
             Program.tileMapManager.isActive = true;
+            Program.tileMapManager.generatePlanet(planetNumber, mapType);
         }
 
         public void activateMenu()
         {
+            Utils.clearConsole();
             Program.rayTracer.isActive = false;
             Program.worldManager.isActive = false;
             Program.menuManager.isActive = true;
             Program.tileMapManager.isActive = false;
 
             currentMenu = new MainMenu();
-            messages = new List<Message>();
+            messages.Clear();
         }
 
+        //TODO MENU MESSAGES DOUBLE UP
         public void createMessages()
         {
             string[] lines = currentMenu.getMessages();
@@ -136,6 +143,7 @@ namespace CRT.Engine
         string[] options =
             {
                 "Start Game",
+                "Go to 3D",
                 "Graphics Options",
                 "Back",
                 "Exit",
@@ -156,20 +164,25 @@ namespace CRT.Engine
             {
                 case 0:
                     {
-                        Program.menuManager.activate3D();
+                        Program.menuManager.activate2D(-1, MapType.Caves);
                         break;
                     }
                 case 1:
                     {
-                        Program.menuManager.currentMenu = new SettingsMenu();
+                        Program.menuManager.activate3D();
                         break;
                     }
                 case 2:
                     {
-                        Program.menuManager.activate3D();
+                        Program.menuManager.setMenu(new SettingsMenu());
                         break;
                     }
                 case 3:
+                    {
+                        Program.menuManager.activate3D();
+                        break;
+                    }
+                case 4:
                     {
                         Program.menuManager.exit();
                         break;
@@ -221,7 +234,7 @@ namespace CRT.Engine
                     }
                 case 3:
                     {
-                        Program.menuManager.currentMenu = new MainMenu();
+                        Program.menuManager.setMenu(new MainMenu());
                         break;
                     }
             }

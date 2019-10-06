@@ -42,7 +42,7 @@ namespace CRT
             tileMapManager = new TileMapManager();
 
             uiManager = new UIManager();
-            uiManager.AddMessage(new Message(0, 0, "no man was here. v0.0.1", ConsoleColor.White, ConsoleColor.Black), false);
+            uiManager.AddMessage(new Message(0, 0, "no man was here. v0.1.0", ConsoleColor.White, ConsoleColor.Black), false);
 
             input = new InputManager();
 
@@ -66,7 +66,6 @@ namespace CRT
             stopwatch.Start();
 
             worldManager.start();
-            tileMapManager.start();
 
             Utils.resetConsoleColor();
 
@@ -75,13 +74,14 @@ namespace CRT
                 tick++;
                 //these update orders matter
                 worldManager.Update();
-                tileMapManager.Update();
                 rayTracer.Update(true);
                 rayTracer.Render(true);
                 input.Update();
+                menuManager.update();
+                tileMapManager.Update();
+
                 frameManager.Draw();
                 uiManager.Update();
-                menuManager.update();
 
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
@@ -95,7 +95,7 @@ namespace CRT
                 uiManager.AddMessage(new Message(0, frameManager.height - 1, renderInfo, ConsoleColor.White, ConsoleColor.Black), true);
                 stopwatch.Restart();
 
-                if(input.IsKeyFalling(OpenTK.Input.Key.Escape))
+                if (input.IsKeyFalling(OpenTK.Input.Key.Escape))
                 {
                     menuManager.activateMenu();
                 }
@@ -112,9 +112,9 @@ namespace CRT
 
             int balls = 3;
 
-            for(int i = 0; i < balls; i++)
+            for (int i = 0; i < balls; i++)
             {
-                for(int j = 0; j < balls; j++)
+                for (int j = 0; j < balls; j++)
                 {
                     Entity ball = new Entity(new Vec3(i * 10, 1, j * 10), 4.5);
                     ball.AddComponent(new BounceComponent());
@@ -122,10 +122,30 @@ namespace CRT
                 }
             }
 
-            ChexelEntity pcT = new ChexelEntity(new vector2(10, 10), ConsoleColor.White, '@');
+            ChexelEntity pcT = new ChexelEntity(new vector2(60, 228), ConsoleColor.White, '@');
             pcT.AddComponent(new CameraCComponent());
             tileMapManager.addEntity(pcT);
 
+            string[] rocket =
+            {
+                "         /\\",
+                "        |==|",
+                "        |  |",
+                "        |  |",
+                "        |  |",
+                "       /____\\",
+                "       |    |",
+                "       |    |",
+                "       |    |",
+                "       |    |",
+                "      /| |  |\\",
+                "     / | |  | \\",
+                "    /__|_|__|__\\",
+                "       /_\\/_\\",
+            };
+
+            FrameEntity rocketShip = new FrameEntity(new vector2(), ConsoleColor.White, ' ', Frame.FromStringArray(rocket));
+            tileMapManager.addFrameEntity(rocketShip);
         }
     }
 }

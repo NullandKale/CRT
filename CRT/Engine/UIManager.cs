@@ -129,6 +129,10 @@ namespace CRT.Engine
 
         public bool hasChexel(int x, int y)
         {
+            if(this.x == 17)
+            {
+                return this.y == y && (x >= this.x && x < this.x + m.Length);
+            }
             return this.y == y && (x >= this.x && x < this.x + m.Length);
         }
     }

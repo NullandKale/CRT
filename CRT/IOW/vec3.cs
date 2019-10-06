@@ -22,10 +22,9 @@ namespace CRT
         public Vec3(Color c)
         {
             this.x = c.R / 255.0;
-            this.y = c.B / 255.0;
-            this.z = c.G / 255.0;
+            this.y = c.G / 255.0;
+            this.z = c.B / 255.0;
         }
-
 
         public double r()
         {

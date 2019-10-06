@@ -11,12 +11,14 @@ namespace CRT.Engine
         public bool isActive = false;
         public vector2 offset = new vector2();
         public Dictionary<vector2, ChexelEntity> entities;
+        public List<FrameEntity> frameEntities;
         private bool isStarted = false;
         Frame tileMap;
 
         public TileMapManager()
         {
             entities = new Dictionary<vector2, ChexelEntity>(new vector2HashCode());
+            frameEntities = new List<FrameEntity>();
         }
 
         public void centerOnCell(vector2 pos)
@@ -24,24 +26,24 @@ namespace CRT.Engine
             offset.x = pos.x - (Program.frameManager.width / 2);
             offset.y = pos.y - (Program.frameManager.height / 2);
 
+            if (offset.x > tileMap.width - 1 - (Program.frameManager.width))
+            {
+                offset.x = tileMap.width - 1 - (Program.frameManager.width);
+            }
+
             if (offset.x < 0)
             {
                 offset.x = 0;
             }
 
-            if (offset.x > tileMap.width - 1 - (Program.frameManager.width))
+            if (offset.y > tileMap.height - 1 - (Program.frameManager.height))
             {
-                offset.x = tileMap.width - (Program.frameManager.width);
+                offset.y = tileMap.height - 1 - (Program.frameManager.height);
             }
 
             if (offset.y < 0)
             {
                 offset.y = 0;
-            }
-
-            if (offset.y > tileMap.height - 1 - (Program.frameManager.height))
-            {
-                offset.y = tileMap.height - (Program.frameManager.height);
             }
         }
 
@@ -79,7 +81,7 @@ namespace CRT.Engine
                 case ConsoleColor.DarkCyan:
                     return false;
                 case ConsoleColor.DarkGray:
-                    return true;
+                    return false;
                 case ConsoleColor.DarkGreen:
                     return false;
                 case ConsoleColor.DarkMagenta:
@@ -112,6 +114,32 @@ namespace CRT.Engine
             }
 
             return null;
+        }
+
+        public bool addFrameEntity(FrameEntity toAdd)
+        {
+            if (frameEntities.Contains(toAdd))
+            {
+                return false;
+            }
+            else
+            {
+                frameEntities.Add(toAdd);
+                if (isStarted)
+                {
+                    toAdd.start();
+                }
+                return true;
+            }
+        }
+
+        public void removeFrameEntity(FrameEntity toRemove)
+        {
+            if (frameEntities.Contains(toRemove))
+            {
+                frameEntities.Remove(toRemove);
+                toRemove.stop();
+            }
         }
 
         public bool addEntity(ChexelEntity toAdd)
@@ -147,6 +175,12 @@ namespace CRT.Engine
             {
                 v.start();
             }
+
+            List<FrameEntity> frameEntityCollection = new List<FrameEntity>(frameEntities);
+            foreach (FrameEntity v in frameEntityCollection)
+            {
+                v.start();
+            }
             isStarted = true;
         }
 
@@ -160,12 +194,28 @@ namespace CRT.Engine
                     v.updateBegin();
                 }
 
+                List<FrameEntity> frameEntityCollection = new List<FrameEntity>(frameEntities);
+                foreach (FrameEntity v in frameEntityCollection)
+                {
+                    v.updateBegin();
+                }
+
                 foreach (ChexelEntity v in entityCollection)
                 {
                     v.update();
                 }
 
+                foreach (FrameEntity v in frameEntityCollection)
+                {
+                    v.update();
+                }
+
                 foreach (ChexelEntity v in entityCollection)
+                {
+                    v.updateEnd();
+                }
+
+                foreach (FrameEntity v in frameEntityCollection)
                 {
                     v.updateEnd();
                 }
@@ -193,12 +243,29 @@ namespace CRT.Engine
                 chexel.t = entities[worldPos].t;
             }
 
+            List<FrameEntity> frameEntityCollection = new List<FrameEntity>(frameEntities);
+            foreach (FrameEntity v in frameEntityCollection)
+            {
+                Chexel temp = v.frame.getChexel(x, y);
+                if(temp.t != ' ')
+                {
+                    chexel.t = temp.t;
+                }
+            }
+
             return chexel;
         }
 
         public bool hasChexel(int x, int y)
         {
             vector2 worldPos = ScreenToWorldPos(new vector2(x, y));
+
+            List<FrameEntity> frameEntityCollection = new List<FrameEntity>(frameEntities);
+            foreach (FrameEntity v in frameEntityCollection)
+            {
+                v.frame.hasChexel(x, y);
+            }
+
             return tileMap.hasChexel(worldPos.x, worldPos.y) || entities.ContainsKey(worldPos);
         }
 
@@ -206,18 +273,20 @@ namespace CRT.Engine
         {
             if (number < 0)
             {
-                tileMap = TileMapGenerator.FromBitmap("./Assets/TroyMap.bmp");
+                tileMap = TileMapGenerator.FromBitmap("./Assets/firstMap.bmp", 1);
             }
             else
             {
                 tileMap = TileMapGenerator.GeneratePlanet(number, 200, 200, mapType);
             }
+
+            start();
         }
     }
 
     public static class TileMapGenerator
     {
-        public static Frame FromBitmap(string path)
+        public static Frame FromBitmap(string path, int pallet)
         {
             if (File.Exists(path))
             {
@@ -228,7 +297,7 @@ namespace CRT.Engine
                 {
                     for (int j = 0; j < b.Height; j++)
                     {
-                        toReturn.setChexel(i, j, new Chexel(ConsoleColor.White, Utils.FromColor(new Vec3(b.GetPixel(i, j)), 2), ' '));
+                        toReturn.setChexel(i, j, new Chexel(ConsoleColor.White, Utils.FromColor(new Vec3(b.GetPixel(i, j)),pallet), ' '));
                     }
                 }
 
