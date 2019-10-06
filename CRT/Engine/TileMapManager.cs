@@ -52,9 +52,22 @@ namespace CRT.Engine
             return isActive;
         }
 
+        public bool frameCollide(vector2 pos)
+        {
+            for(int i = 0; i < frameEntities.Count; i++)
+            {
+                if(frameEntities[i].isActive && frameEntities[i].frame.hasChexel(pos.x, pos.y))
+                {
+                    return frameEntities[i].frame.getChexel(pos.x, pos.y).t != ' ';
+                }
+            }
+
+            return false;
+        }
+
         public bool moveEntity(ChexelEntity toMove, vector2 newPos)
         {
-            if (entities.ContainsKey(newPos) || toMove.pos.Equals(newPos) || !tileMap.hasChexel(newPos.x, newPos.y) || isCollideable(tileMap.getChexel(newPos.x, newPos.y).b))
+            if (entities.ContainsKey(newPos) || toMove.pos.Equals(newPos) || !tileMap.hasChexel(newPos.x, newPos.y) || isCollideable(tileMap.getChexel(newPos.x, newPos.y).b) || frameCollide(newPos))
             {
                 return false;
             }
@@ -246,7 +259,7 @@ namespace CRT.Engine
             List<FrameEntity> frameEntityCollection = new List<FrameEntity>(frameEntities);
             foreach (FrameEntity v in frameEntityCollection)
             {
-                Chexel temp = v.frame.getChexel(x, y);
+                Chexel temp = v.frame.getChexel(worldPos.x, worldPos.y);
                 if(temp.t != ' ')
                 {
                     chexel.t = temp.t;

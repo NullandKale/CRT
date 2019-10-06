@@ -6,6 +6,7 @@ using CRT.SolarSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace CRT
 {
@@ -23,6 +24,7 @@ namespace CRT
 
         public static bool run = true;
         public static int tick = 0;
+        public static int frameLimit = 30;
 
         public static void Main(string[] args)
         {
@@ -43,7 +45,7 @@ namespace CRT
             tileMapManager = new TileMapManager();
 
             uiManager = new UIManager();
-            uiManager.AddMessage(new Message(0, 0, "no man was here. v0.1.0", ConsoleColor.White, ConsoleColor.Black), false);
+            uiManager.AddMessage(new Message(0, 0, "no man was here. v0.1.1", ConsoleColor.White, ConsoleColor.Black), false);
 
             input = new InputManager();
 
@@ -73,6 +75,8 @@ namespace CRT
             while (run)
             {
                 tick++;
+                bool frameLimited = false;
+
                 //these update orders matter
                 worldManager.Update();
                 rayTracer.Update(true);
@@ -84,16 +88,23 @@ namespace CRT
                 frameManager.Draw();
                 uiManager.Update();
 
+                while (stopwatch.Elapsed.TotalMilliseconds < (1000.0 / frameLimit))
+                {
+                    Thread.Sleep(1);
+                    frameLimited = true;
+                }
+
                 averageFrameTime += stopwatch.Elapsed.TotalSeconds;
                 frames++;
 
-                string renderInfo = string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + " FPS"
-                                            + " POS " + rayTracer.camera.origin.ToString()
-                                            + " D " + string.Format("{0:0.00}", frameManager.drawTime.TotalMilliseconds)
-                                            + "MS R " + string.Format("{0:0.00}", rayTracer.renderTime.TotalMilliseconds)
-                                            + "MS U " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
+                string renderInfo = string.Format("{0:0.00}", 1.0 / (averageFrameTime / frames)) + (frameLimited ? " fps FRAMELIMITED" : " fps")
+                                            + " pos " + rayTracer.camera.origin.ToString()
+                                            + " d " + string.Format("{0:0.00}", frameManager.drawTime.TotalMilliseconds)
+                                            + "MS r " + string.Format("{0:0.00}", rayTracer.renderTime.TotalMilliseconds)
+                                            + "MS u " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
                                             + "MS";
                 uiManager.AddMessage(new Message(0, frameManager.height - 1, renderInfo, ConsoleColor.White, ConsoleColor.Black), true);
+
                 stopwatch.Restart();
 
                 if (input.IsKeyFalling(OpenTK.Input.Key.Escape))
@@ -123,23 +134,23 @@ namespace CRT
 
             string[] rocket =
             {
-                "         /\\",
-                "        |==|",
-                "        |  |",
-                "        |  |",
-                "        |  |",
-                "       /____\\",
-                "       |    |",
-                "       |    |",
-                "       |    |",
-                "       |    |",
-                "      /| |  |\\",
-                "     / | |  | \\",
-                "    /__|_|__|__\\",
-                "       /_\\/_\\",
+                "     /\\ ",
+                "    |==| ",
+                "    |  | ",
+                "    |  | ",
+                "    |  | ",
+                "   /____\\ ",
+                "   |    | ",
+                "   |    | ",
+                "   |    | ",
+                "   |    | ",
+                "  /| |  |\\ ",
+                " / | |  | \\ ",
+                "/__|_|__|__\\ ",
+                "   /_\\/_\\ "
             };
 
-            FrameEntity rocketShip = new FrameEntity(new vector2(), ConsoleColor.White, ' ', Frame.FromStringArray(rocket));
+            FrameEntity rocketShip = new FrameEntity(new vector2(54, 2), ConsoleColor.White, ' ', Frame.FromStringArray(rocket, ConsoleColor.Black, ConsoleColor.Green));
             tileMapManager.addFrameEntity(rocketShip);
         }
     }

@@ -196,8 +196,9 @@ namespace CRT.Engine
         string[] optionsBase =
             {
                 "Set FOV",
-                "Set SuperSampling",
+                "Set Super Sampling",
                 "Set Max Ray Bounces",
+                "Set FrameLimit",
                 "Back",
             };
         public string[] getMessages()
@@ -216,23 +217,29 @@ namespace CRT.Engine
             {
                 case 0:
                     {
-                        int newFOV = Utils.GetIntFromConsole("The current FOV is " + Program.rayTracer.camera.vfov + " enter new FOV");
+                        int newFOV = Utils.GetIntFromConsole("The current FOV is " + Program.rayTracer.camera.vfov + ", the default is 90. Enter new FOV:");
                         Program.rayTracer.camera.vfov = newFOV;
                         break;
                     }
                 case 1:
                     {
-                        int newSS = Utils.GetIntFromConsole("The current SS is " + Program.rayTracer.superSample + " enter new SS");
+                        int newSS = Utils.GetIntFromConsole("The current Super Sampling is " + Program.rayTracer.superSample + ", the default is 2. Enter new SS:");
                         Program.rayTracer.superSample = newSS;
                         break;
                     }
                 case 2:
                     {
-                        int newMRB = Utils.GetIntFromConsole("The current MRB is " + Program.rayTracer.maxDepth + " enter new MRB");
+                        int newMRB = Utils.GetIntFromConsole("The current Max Ray Bounces is " + Program.rayTracer.maxDepth + ", the default is 6. Enter new MRB:");
                         Program.rayTracer.maxDepth = newMRB;
                         break;
                     }
                 case 3:
+                    {
+                        int newFrameLimit = Utils.GetIntFromConsole("The current FrameLimit " + Program.frameLimit + ", the default is 30. Enter new Frame Limit:");
+                        Program.frameLimit = newFrameLimit;
+                        break;
+                    }
+                case 4:
                     {
                         Program.menuManager.setMenu(new MainMenu());
                         break;

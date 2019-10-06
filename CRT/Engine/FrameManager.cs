@@ -209,25 +209,29 @@ namespace CRT
             return toReturn;
         }
 
-        public static Frame FromStringArray(string[] input)
+        public static Frame FromStringArray(string[] input, ConsoleColor f, ConsoleColor b)
         {
-            int width = 0;
+            int height = 0;
 
             for(int i = 0; i < input.Length; i++)
             {
-                if (width < input[i].Length)
+                if (height < input[i].Length)
                 {
-                    width = input[i].Length;
+                    height = input[i].Length;
                 }
             }
 
-            Frame toReturn = new Frame(width, input.Length, 0, 0);
+            Frame toReturn = new Frame(height, input.Length, 0, 0);
 
             for (int i = 0; i < input.Length; i++)
             {
                 for (int j = 0; j < input[i].Length; j++)
                 {
-                    toReturn.setChexel(i, j, new Chexel(ConsoleColor.White, ConsoleColor.Black, input[i].ToCharArray()[j]));
+                    char c = input[i].ToCharArray()[j];
+                    if(c != ' ')
+                    {
+                        toReturn.setChexel(j, i, new Chexel(f, b, c));
+                    }
                 }
             }
 
