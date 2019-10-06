@@ -30,7 +30,7 @@ namespace CRT
         public HitableList world;
         public List<Light> lights;
         public Camera camera;
-        public double ambientLight = 0;
+        public double ambientLight = 0.5;
 
         private int pallet = 0;
         public RayTracer(int height, int width, int superSample, int maxDepth, int fov, bool consoleAspectFix)

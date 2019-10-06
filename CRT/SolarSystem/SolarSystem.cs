@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CRT.Engine;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,22 +7,16 @@ namespace CRT.SolarSystem
 {
     public class SolarSystem
     {
-        List<Planet> planets;
+        public Planet[] planets;
+        public int numPlanets;
 
-        public void Init()
+        public SolarSystem(int numPlanets)
         {
-            for (int i = 0; i < 5; i++)
+            this.numPlanets = numPlanets;
+            planets = new Planet[numPlanets];
+            for (int i = 0; i < numPlanets; i++)
             {
-                Planet newPlanet = new Planet(i);
-                planets.Add(newPlanet);
-            }
-        }
-
-        public void Update()
-        {
-            for (int i = 0; i < 5; i++)
-            {
-
+                planets[i] = new Planet(i);
             }
         }
     }

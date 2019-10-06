@@ -1,6 +1,7 @@
 ﻿using CRT.Engine;
 using CRT.Engine.Components;
 using CRT.IOW;
+using CRT.SolarSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -103,16 +104,10 @@ namespace CRT
             pc.AddComponent(new CameraComponent());
             worldManager.addEntity(pc);
 
-            int balls = 3;
-
-            for(int i = 0; i < balls; i++)
+            SolarSystem.SolarSystem solarSystem = new SolarSystem.SolarSystem(8);
+            for (int i = 0; i < solarSystem.numPlanets; i++)
             {
-                for(int j = 0; j < balls; j++)
-                {
-                    Entity ball = new Entity(new Vec3(i * 10, 1, j * 10), 4.5);
-                    ball.AddComponent(new BounceComponent());
-                    worldManager.addEntity(ball);
-                }
+                worldManager.addEntity(solarSystem.planets[i].entity);
             }
         }
     }
