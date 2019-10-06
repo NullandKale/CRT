@@ -24,8 +24,6 @@ namespace CRT
         public static bool run = true;
         public static int tick = 0;
 
-        public static int tick;
-
         public static void Main(string[] args)
         {
             engineInit();
@@ -113,16 +111,10 @@ namespace CRT
             pc.AddComponent(new CameraComponent());
             worldManager.addEntity(pc);
 
-            int balls = 3;
-
-            for(int i = 0; i < balls; i++)
+            SolarSystem.SolarSystem solarSystem = new SolarSystem.SolarSystem(8);
+            for (int i = 0; i < solarSystem.numPlanets; i++)
             {
-                for(int j = 0; j < balls; j++)
-                {
-                    Entity ball = new Entity(new Vec3(i * 10, 1, j * 10), 4.5);
-                    ball.AddComponent(new BounceComponent());
-                    worldManager.addEntity(ball);
-                }
+                worldManager.addEntity(solarSystem.planets[i].entity);
             }
 
             ChexelEntity pcT = new ChexelEntity(new vector2(60, 228), ConsoleColor.White, '@');
