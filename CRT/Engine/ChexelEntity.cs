@@ -7,6 +7,7 @@ namespace CRT.Engine
     public class ChexelEntity
     {
         public vector2 pos;
+        public bool started = false;
         public bool isActive = true;
         public ConsoleColor f;
         public char t;
@@ -20,11 +21,25 @@ namespace CRT.Engine
             this.t = t;
             components = new Dictionary<string, ChexelComponent>();
         }
+
+        public ChexelComponent GetComponent(string TypeString)
+        {
+            if (components.ContainsKey(TypeString))
+            {
+                return components[TypeString];
+            }
+
+            return null;
+        }
         public void AddComponent(ChexelComponent c)
         {
             if (!components.ContainsValue(c))
             {
                 components.Add(c.GetType().ToString(), c);
+                if (started)
+                {
+                    c.start(this);
+                }
             }
         }
 
@@ -34,6 +49,7 @@ namespace CRT.Engine
             {
                 c.start(this);
             }
+            started = true;
         }
 
         public void stop()

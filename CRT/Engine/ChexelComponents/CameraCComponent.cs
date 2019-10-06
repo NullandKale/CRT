@@ -9,6 +9,7 @@ namespace CRT.Engine.ChexelComponents
         public ChexelEntity follow;
         public int waitFrames = 30;
         public int waitCounter = 0;
+        public bool controllable = true;
         public bool hasMoved = false;
         public void loadString(string toLoad)
         {
@@ -47,34 +48,40 @@ namespace CRT.Engine.ChexelComponents
             {
                 vector2 movement = new vector2();
 
-                if (Program.input.IsKeyHeld(OpenTK.Input.Key.W))
+                if (Program.input.IsKeyHeld(OpenTK.Input.Key.W) && controllable)
                 {
                     movement.y--;
                     hasMoved = true;
                 }
 
-                if (Program.input.IsKeyHeld(OpenTK.Input.Key.S))
+                if (Program.input.IsKeyHeld(OpenTK.Input.Key.S) && controllable)
                 {
                     movement.y++;
                 }
 
-                if (Program.input.IsKeyHeld(OpenTK.Input.Key.A))
+                if (Program.input.IsKeyHeld(OpenTK.Input.Key.A) && controllable)
                 {
                     movement.x--;
                 }
 
-                if (Program.input.IsKeyHeld(OpenTK.Input.Key.D))
+                if (Program.input.IsKeyHeld(OpenTK.Input.Key.D) && controllable)
                 {
                     movement.x++;
                 }
 
-                if (Program.tileMapManager.moveEntity(follow, new vector2(follow.pos.x + movement.x, follow.pos.y + movement.y)))
+                if (Program.tileMapManager.moveEntity(follow, new vector2(follow.pos.x + movement.x, follow.pos.y + movement.y)) && controllable)
                 {
                     Program.tileMapManager.centerOnCell(follow.pos);
                 }
                 else
                 {
-                    //Collided
+                    (bool, FrameEntity) col = Program.tileMapManager.frameCollide(new vector2(follow.pos.x + movement.x, follow.pos.y + movement.y));
+                    if(col.Item1)
+                    {
+                        CockpitCComponent cockpit = (CockpitCComponent)col.Item2.GetComponent(new CockpitCComponent().GetType().ToString());
+                        cockpit.activateCockpit();
+                        Program.tileMapManager.removeEntity(follow);
+                    }
                 }
             }
             else

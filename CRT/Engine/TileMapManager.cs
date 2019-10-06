@@ -52,22 +52,32 @@ namespace CRT.Engine
             return isActive;
         }
 
-        public bool frameCollide(vector2 pos)
+        public (bool, FrameEntity) frameCollide(vector2 pos)
         {
             for(int i = 0; i < frameEntities.Count; i++)
             {
                 if(frameEntities[i].isActive && frameEntities[i].frame.hasChexel(pos.x, pos.y))
                 {
-                    return frameEntities[i].frame.getChexel(pos.x, pos.y).t != ' ';
+                    return (frameEntities[i].frame.getChexel(pos.x, pos.y).t != ' ', frameEntities[i]);
                 }
             }
 
-            return false;
+            return (false, null);
+        }
+
+        public (bool, ChexelEntity) chexelCollide(vector2 pos)
+        {
+            if(entities.ContainsKey(pos))
+            {
+                return (true, entities[pos]);
+            }
+
+            return (false, null);
         }
 
         public bool moveEntity(ChexelEntity toMove, vector2 newPos)
         {
-            if (entities.ContainsKey(newPos) || toMove.pos.Equals(newPos) || !tileMap.hasChexel(newPos.x, newPos.y) || isCollideable(tileMap.getChexel(newPos.x, newPos.y).b) || frameCollide(newPos))
+            if (entities.ContainsKey(newPos) || toMove.pos.Equals(newPos) || !tileMap.hasChexel(newPos.x, newPos.y) || isCollideable(tileMap.getChexel(newPos.x, newPos.y).b) || frameCollide(newPos).Item1)
             {
                 return false;
             }

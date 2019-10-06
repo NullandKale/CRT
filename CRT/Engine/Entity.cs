@@ -7,6 +7,7 @@ namespace CRT.Engine
 {
     public class Entity
     {
+        public bool started = false;
         public bool distUpdate = true;
         public double dist;
 
@@ -29,11 +30,25 @@ namespace CRT.Engine
             }
         }
 
+        public Component GetComponent(string TypeString)
+        {
+            if(components.ContainsKey(TypeString))
+            {
+                return components[TypeString];
+            }
+
+            return null;
+        }
+
         public void AddComponent(Component c)
         {
             if(!components.ContainsValue(c))
             {
                 components.Add(c.GetType().ToString(), c);
+                if(started)
+                {
+                    c.start(this);
+                }
             }
         }
 
@@ -50,6 +65,7 @@ namespace CRT.Engine
             {
                 c.start(this);
             }
+            started = true;
         }
 
         public void stop()

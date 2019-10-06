@@ -308,6 +308,13 @@ namespace CRT
             this.t = ' ';
         }
 
+        public Chexel(char t)
+        {
+            this.f = ConsoleColor.White;
+            this.b = ConsoleColor.Black;
+            this.t = t;
+        }
+
         public Chexel(ConsoleColor f, ConsoleColor b, char t)
         {
             this.f = f;

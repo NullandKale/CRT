@@ -124,6 +124,7 @@ namespace CRT
         public int height;
         public int xOffset;
         public int yOffset;
+        public bool useOffset;
         public bool isActive;
 
         public ConsoleColor[,] background;
@@ -136,6 +137,7 @@ namespace CRT
             this.height = height;
             this.xOffset = xOffset;
             this.yOffset = yOffset;
+            this.useOffset = true;
 
             background = new ConsoleColor[width,height];
             forground = new ConsoleColor[width,height];
@@ -154,7 +156,14 @@ namespace CRT
 
         public bool hasChexel(int x, int y)
         {
-            return (x >= xOffset && x < width + xOffset) && (y >= yOffset && y < height + yOffset);
+            if (useOffset)
+            {
+                return (x >= xOffset && x < width + xOffset) && (y >= yOffset && y < height + yOffset);
+            }
+            else
+            {
+                return (x >= 0 && x < width) && (y >= 0 && y < height);
+            }
         }
 
         public Chexel getChexel(int x, int y)
