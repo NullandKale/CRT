@@ -2,6 +2,7 @@
 using CRT.Engine.ChexelComponents;
 using CRT.Engine.Components;
 using CRT.IOW;
+using CRT.SolarSystem;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +23,8 @@ namespace CRT
 
         public static bool run = true;
         public static int tick = 0;
+
+        public static int tick;
 
         public static void Main(string[] args)
         {
@@ -112,9 +115,9 @@ namespace CRT
 
             int balls = 3;
 
-            for (int i = 0; i < balls; i++)
+            for(int i = 0; i < balls; i++)
             {
-                for (int j = 0; j < balls; j++)
+                for(int j = 0; j < balls; j++)
                 {
                     Entity ball = new Entity(new Vec3(i * 10, 1, j * 10), 4.5);
                     ball.AddComponent(new BounceComponent());
