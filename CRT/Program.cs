@@ -21,6 +21,7 @@ namespace CRT
         public static UIManager uiManager;
         public static MenuManager menuManager;
         public static SaveDataManager saveData;
+        public static InventoryManager inventoryManager;
 
         public static bool run = true;
         public static int tick = 0;
@@ -58,6 +59,9 @@ namespace CRT
             frameManager.addLayer(tileMapManager);
             frameManager.addLayer(rayTracer);
             frameManager.addLayer(uiManager);
+
+            inventoryManager = new InventoryManager();
+            inventoryManager.ResetToZero();
         }
 
         public static void engineStart()
@@ -104,6 +108,44 @@ namespace CRT
                                             + "MS u " + string.Format("{0:0.00}", rayTracer.updateTime.TotalMilliseconds)
                                             + "MS";
                 uiManager.AddMessage(new Message(0, frameManager.height - 1, renderInfo, ConsoleColor.White, ConsoleColor.Black), true);
+
+                int inventoryCharCount = frameManager.width - 1;
+
+                string oxygenString = inventoryManager.GetOxygen().ToString("0000");
+                inventoryCharCount -= oxygenString.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, oxygenString, ConsoleColor.White, ConsoleColor.Black), true);
+                inventoryCharCount -= 1;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, " ", ConsoleColor.White, ConsoleColor.DarkGreen), true);
+                string oxygenHeader = " O2";
+                inventoryCharCount -= oxygenHeader.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, oxygenHeader, ConsoleColor.White, ConsoleColor.Black), true);
+
+                string waterString = inventoryManager.GetWater().ToString("0000");
+                inventoryCharCount -= waterString.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, waterString, ConsoleColor.White, ConsoleColor.Black), true);
+                inventoryCharCount -= 1;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, " ", ConsoleColor.White, ConsoleColor.DarkBlue), true);
+                string waterHeader = " H20";
+                inventoryCharCount -= waterHeader.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, waterHeader, ConsoleColor.White, ConsoleColor.Black), true);
+
+                string foodString = inventoryManager.GetFood().ToString("0000");
+                inventoryCharCount -= foodString.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, foodString, ConsoleColor.White, ConsoleColor.Black), true);
+                inventoryCharCount -= 1;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, " ", ConsoleColor.White, ConsoleColor.DarkYellow), true);
+                string foodHeader = " FOOD";
+                inventoryCharCount -= foodHeader.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, foodHeader, ConsoleColor.White, ConsoleColor.Black), true);
+
+                string fuelString = inventoryManager.GetFuel().ToString("0000");
+                inventoryCharCount -= fuelString.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, fuelString, ConsoleColor.White, ConsoleColor.Black), true);
+                inventoryCharCount -= 1;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, " ", ConsoleColor.White, ConsoleColor.DarkMagenta), true);
+                string fuelHeader = "FUEL";
+                inventoryCharCount -= fuelHeader.Length;
+                uiManager.AddMessage(new Message(inventoryCharCount, 0, fuelHeader, ConsoleColor.White, ConsoleColor.Black), true);
 
                 stopwatch.Restart();
 
