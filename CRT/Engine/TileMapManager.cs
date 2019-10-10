@@ -75,9 +75,14 @@ namespace CRT.Engine
             return (false, null);
         }
 
+        public bool checkCollide(vector2 toMove, vector2 newPos)
+        {
+            return entities.ContainsKey(newPos) && toMove.Equals(newPos) && tileMap.hasChexel(newPos.x, newPos.y) && isCollideable(tileMap.getChexel(newPos.x, newPos.y).b) && frameCollide(newPos).Item1;
+        }
+
         public bool moveEntity(ChexelEntity toMove, vector2 newPos)
         {
-            if (entities.ContainsKey(newPos) || toMove.pos.Equals(newPos) || !tileMap.hasChexel(newPos.x, newPos.y) || isCollideable(tileMap.getChexel(newPos.x, newPos.y).b) || frameCollide(newPos).Item1)
+            if(checkCollide(toMove.pos, newPos))
             {
                 return false;
             }
@@ -263,6 +268,7 @@ namespace CRT.Engine
             if (entities.ContainsKey(worldPos))
             {
                 chexel.f = entities[worldPos].f;
+                chexel.b = ConsoleColor.Black;
                 chexel.t = entities[worldPos].t;
             }
 
@@ -273,6 +279,8 @@ namespace CRT.Engine
                 if(temp.t != ' ')
                 {
                     chexel.t = temp.t;
+                    chexel.f = temp.f;
+                    chexel.b = temp.b;
                 }
             }
 

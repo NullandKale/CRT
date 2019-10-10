@@ -153,6 +153,12 @@ namespace CRT
             FrameEntity rocketShip = new FrameEntity(new vector2(54, 2), ConsoleColor.White, ' ', Frame.FromStringArray(rocket, ConsoleColor.Black, ConsoleColor.Green));
             rocketShip.AddComponent(new CockpitCComponent());
             tileMapManager.addFrameEntity(rocketShip);
+
+            FrameEntity rocketExhaust = new FrameEntity(new vector2(rocketShip.pos.x, rocketShip.pos.y + rocket.Length), ConsoleColor.White, ' ', new Frame(12, 8, 0, 0));
+            rocketExhaust.AddComponent(new FollowEndCComponent(rocketShip));
+            rocketExhaust.frame.shader = new FireShader(rocketExhaust.frame);
+            rocketExhaust.frame.hasShader = true;
+            tileMapManager.addFrameEntity(rocketExhaust);
         }
     }
 }

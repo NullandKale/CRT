@@ -192,6 +192,13 @@ namespace CRT
             return rng.NextDouble();
         }
 
+
+        public static int rand(int min, int max)
+        {
+            return rng.Next(min, max);
+        }
+
+
         public static double rand(double min, double max)
         {
             return (rng.NextDouble() * (max - min) + min);

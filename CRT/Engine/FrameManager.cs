@@ -90,13 +90,13 @@ namespace CRT
                             if (bToSet != currentBackground)
                             {
                                 Console.BackgroundColor = bToSet;
-                                currentBackground = Console.BackgroundColor;
+                                currentBackground = bToSet;
                             }
 
                             if (fToSet != currentForground)
                             {
                                 Console.ForegroundColor = fToSet;
-                                currentForground = Console.BackgroundColor;
+                                currentForground = fToSet;
                             }
                         }
                     }
@@ -131,6 +131,9 @@ namespace CRT
         public ConsoleColor[,] forground;
         public char[,] text;
 
+        public bool hasShader;
+        public ChexelProvider shader;
+
         public Frame(int width, int height, int xOffset, int yOffset)
         {
             this.width = width;
@@ -138,6 +141,8 @@ namespace CRT
             this.xOffset = xOffset;
             this.yOffset = yOffset;
             this.useOffset = true;
+            this.hasShader = false;
+            shader = null;
 
             background = new ConsoleColor[width,height];
             forground = new ConsoleColor[width,height];
@@ -156,6 +161,17 @@ namespace CRT
 
         public bool hasChexel(int x, int y)
         {
+            if(hasShader)
+            {
+                if(useOffset)
+                {
+                    return shader.hasChexel(x + xOffset, y + yOffset);
+                }
+                else
+                {
+                    return shader.hasChexel(x, y);
+                }
+            }
             if (useOffset)
             {
                 return (x >= xOffset && x < width + xOffset) && (y >= yOffset && y < height + yOffset);
@@ -168,6 +184,10 @@ namespace CRT
 
         public Chexel getChexel(int x, int y)
         {
+            if(hasShader)
+            {
+                return shader.getChexel(x - xOffset, y - yOffset);
+            }
             if(!hasChexel(x,y))
             {
                 return new Chexel();
