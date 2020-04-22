@@ -89,7 +89,7 @@ namespace CRT.Engine
         {
             entities.Sort(new Comparison<Entity>(CompareByDist));
             renderableEntities = new List<Entity>(entities.Where(entity => (entity.dist <= cullingDist && entity.render)));
-            Program.rayTracer.world.set(new List<Hitable>(entities.Select(entity => entity.sphere)));
+            Program.rayTracer.world.set(new List<Hitable>(entities.Select(entity => entity.hit)));
         }
 
         //there may be a faster way to do this
@@ -133,7 +133,7 @@ namespace CRT.Engine
         {
             if(e.distUpdate)
             {
-                e.dist = Vec3.dist(cameraPos, e.sphere.center);
+                e.dist = Vec3.dist(cameraPos, e.hit.getCenter());
                 e.distUpdate = false;
             }
 

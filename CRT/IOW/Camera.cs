@@ -158,7 +158,7 @@ namespace CRT.IOW
 
         public void takeScreenshot(string fileName, Camera camera, HitableList world)
         {
-            RayTracer rayTracer = new RayTracer(600, 800, 4, 32, (int)camera.vfov, false);
+            RayTracer rayTracer = new RayTracer(600, 800, 1, 8, (int)camera.vfov, false);
             rayTracer.camera.origin = camera.origin;
             rayTracer.camera.lookAt = camera.lookAt;
             rayTracer.camera.updatePos();

@@ -56,5 +56,15 @@ namespace CRT.IOW
             box = new aabb(center - new Vec3(radius, radius, radius), center + new Vec3(radius, radius, radius));
             return true;
         }
+
+        public Vec3 getCenter()
+        {
+            return center;
+        }
+
+        public void setCenter(Vec3 center)
+        {
+            this.center = center;
+        }
     }
 }

@@ -170,7 +170,14 @@ namespace CRT
 
                 col /= (double)(superSample * superSample);
                 col = new Vec3(Math.Sqrt(col.x), Math.Sqrt(col.y), Math.Sqrt(col.z));
-                frameBuffer[x, flip - y] = col;
+                if(!(double.IsNaN(col.x) || double.IsNaN(col.y) || double.IsNaN(col.z)))
+                {
+                    frameBuffer[x, flip - y] = col;
+                }
+                else
+                {
+                    frameBuffer[x, flip - y] = new Vec3(0.9, 0, 0.9);
+                }
             });
         }
 

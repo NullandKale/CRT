@@ -14,7 +14,9 @@ namespace CRT.IOW
         public MaterialData material;
     }
     public interface Hitable
-    {   
+    {
+        Vec3 getCenter();
+        void setCenter(Vec3 center);
         bool hit(Ray r, double tMin, double tMax, ref HitRecord rec);
         bool boundingBox(ref aabb box);
     }

@@ -1,4 +1,5 @@
-﻿using CRT.SolarSystem;
+﻿using CRT.IOW;
+using CRT.SolarSystem;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,7 +28,7 @@ namespace CRT.Engine.Components
             this.entity = e;
             angleDeg = Utils.rand(0, 360);
             speed = Utils.rand(0.01, 0.05);
-            distance = e.sphere.center.x;
+            distance = ((Sphere)e.hit).center.x;
         }
 
         public void stop()
@@ -37,8 +38,8 @@ namespace CRT.Engine.Components
 
         public void update()
         {
-            double currentX = entity.sphere.center.x;
-            double currentZ = entity.sphere.center.z;
+            double currentX = ((Sphere)entity.hit).center.x;
+            double currentZ = ((Sphere)entity.hit).center.z;
             double newX = (Math.Cos(angleRad) * distance);
             double newZ = (Math.Sin(angleRad) * distance);
             entity.Move(new Vec3(newX - currentX, 0, newZ - currentZ));

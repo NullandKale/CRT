@@ -23,29 +23,84 @@ namespace CRT.IOW.Objects
             return true;
         }
 
-        public bool hit(Ray r, double tMin, double tMax, ref HitRecord rec)
+        public Vec3 getCenter()
         {
-            double txmin = (box.min.x - r.a.x) / r.b.x;
-            double txmax = (box.max.x - r.a.x) / r.b.x;
+            return center;
+        }
 
-            double tymin = (box.min.y - r.a.y) / r.b.y;
-            double tymax = (box.max.y - r.a.y) / r.b.y;
-
-            if(txmin > txmax)
+        public bool hit(Ray ray, double tMin, double tMax, ref HitRecord rec)
+        {
+            double minV = (box.min.x - ray.a.x) / ray.b.x;
+            double maxV = (box.max.x - ray.a.x) / ray.b.x;
+            double t1 = Utils.max(minV, maxV);
+            double t0 = Utils.min(minV, maxV);
+            tMin = Utils.max(t0, tMin);
+            tMax = Utils.min(t1, tMax);
+            if (tMax <= tMin)
             {
-                double temp = txmax;
-                txmax = txmin;
-                txmin = temp;
+                return false;
             }
 
-            if (tymin > tymax)
+            minV = (box.min.y - ray.a.y) / ray.b.y;
+            maxV = (box.max.y - ray.a.y) / ray.b.y;
+            t1 = Utils.max(minV, maxV);
+            t0 = Utils.min(minV, maxV);
+            tMin = Utils.max(t0, tMin);
+            tMax = Utils.min(t1, tMax);
+            if (tMax <= tMin)
             {
-                double temp = tymax;
-                tymax = tymin;
-                tymin = temp;
+                return false;
             }
 
-            return false;
+            minV = (box.min.z - ray.a.z) / ray.b.z;
+            maxV = (box.max.z - ray.a.z) / ray.b.z;
+            t1 = Utils.max(minV, maxV);
+            t0 = Utils.min(minV, maxV);
+            tMin = Utils.max(t0, tMin);
+            tMax = Utils.min(t1, tMax);
+            if (tMax <= tMin)
+            {
+                return false;
+            }
+
+            rec.t = tMin;
+            rec.p = ray.pointAtParameter(rec.t);
+            if(rec.p.x == box.min.x)
+            {
+                rec.normal = new Vec3(1, 0, 0);
+            }
+
+            if(rec.p.x == box.max.x)
+            {
+                rec.normal = new Vec3(-1, 0, 0);
+            }
+
+            if (rec.p.y == box.min.y)
+            {
+                rec.normal = new Vec3(0, 1, 0);
+            }
+
+            if (rec.p.y == box.max.y)
+            {
+                rec.normal = new Vec3(0, -1, 0);
+            }
+
+            if (rec.p.z == box.min.z)
+            {
+                rec.normal = new Vec3(0, 0, 1);
+            }
+
+            if (rec.p.z == box.max.z)
+            {
+                rec.normal = new Vec3(0, 0, -1);
+            }
+            rec.material = material;
+            return true;
+        }
+
+        public void setCenter(Vec3 center)
+        {
+            this.center = center;
         }
     }
 }

@@ -11,7 +11,7 @@ namespace CRT.Engine
         public bool distUpdate = true;
         public double dist;
 
-        public Sphere sphere;
+        public Hitable hit;
         public bool render;
         public Dictionary<string, Component> components;
 
@@ -22,12 +22,19 @@ namespace CRT.Engine
 
             if(Utils.rand() > 0.25)
             {
-                sphere = new Sphere(loc, radius, new MaterialData(MaterialPrefab.ivory, Utils.randomColor()));
+                hit = new Sphere(loc, radius, new MaterialData(MaterialPrefab.ivory, Utils.randomColor()));
             }
             else
             {
-                sphere = new Sphere(loc, radius, MaterialData.mirror);
+                hit = new Sphere(loc, radius, MaterialData.mirror);
             }
+        }
+
+        public Entity(Hitable hitable)
+        {
+            render = true;
+            components = new Dictionary<string, Component>();
+            hit = hitable;
         }
 
         public Component GetComponent(string TypeString)
@@ -55,7 +62,7 @@ namespace CRT.Engine
         public void Move(Vec3 delta)
         {
             //TODO collision maybe use bounding box list dictionary trick
-            sphere.center += delta;
+            ((Sphere)hit).center += delta;
             distUpdate = true;
         }
 

@@ -158,5 +158,15 @@ namespace CRT.IOW
 
             return false;
         }
+
+        public Vec3 getCenter()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void setCenter(Vec3 center)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace CRT.SolarSystem
             this.terrain = Utils.rand() > 0.5 ? Terrain.Cavern : Terrain.Forest;
 
             this.entity = new Entity(new Vec3(((index + 1) * 15) + 15, 0, 0), 5);
-            this.entity.sphere.material = new MaterialData(MaterialPrefab.rubber, GetColor(this.terrain));
+            ((Sphere)this.entity.hit).material = new MaterialData(MaterialPrefab.rubber, GetColor(this.terrain));
             this.entity.AddComponent(new OrbitComponent());
         }
 

@@ -2,6 +2,7 @@
 using CRT.Engine.ChexelComponents;
 using CRT.Engine.Components;
 using CRT.IOW;
+using CRT.IOW.Objects;
 using CRT.SolarSystem;
 using System;
 using System.Collections.Generic;
@@ -24,12 +25,12 @@ namespace CRT
 
         public static bool run = true;
         public static int tick = 0;
-        public static int frameLimit = 10000;
+        public static int frameLimit = 30;
 
         public static void Main(string[] args)
         {
             engineInit();
-            engineTestSetup();
+            engineCubeTestSetup();
             engineStart();
         }
 
@@ -49,7 +50,7 @@ namespace CRT
 
             input = new InputManager();
 
-            rayTracer = new RayTracer(frameManager.height, frameManager.width, 2, 6, 90, true);
+            rayTracer = new RayTracer(frameManager.height, frameManager.width, 1, 3, 90, true);
             rayTracer.camera.doUpdate = true;
             rayTracer.ambientLight = 0.075;
 
@@ -80,7 +81,7 @@ namespace CRT
                 //these update orders matter
                 worldManager.Update();
                 rayTracer.Update(true);
-                rayTracer.Render(true);
+                rayTracer.Render(false);
                 input.Update();
                 menuManager.update();
                 tileMapManager.Update();
@@ -118,7 +119,16 @@ namespace CRT
 
         public static void engineCubeTestSetup()
         {
+            Entity pc = new Entity(new Vec3(0, 0, 0), 0);
+            pc.AddComponent(new CameraComponent());
+            worldManager.addEntity(pc);
 
+            Entity sphere = new Entity(new Vec3(10, 0, 0), 1);
+            ((Sphere)sphere.hit).material = MaterialData.redRubber;
+            worldManager.addEntity(sphere);
+
+            Entity cube = new Entity(new Cube(new Vec3(10, 2, 0), MaterialData.blueRubber));
+            worldManager.addEntity(cube);
         }
 
         public static void engineTestSetup()

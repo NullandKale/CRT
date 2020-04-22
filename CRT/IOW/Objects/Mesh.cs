@@ -18,7 +18,17 @@ namespace CRT.IOW
             throw new NotImplementedException();
         }
 
+        public Vec3 getCenter()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool hit(Ray r, double tMin, double tMax, ref HitRecord rec)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void setCenter(Vec3 center)
         {
             throw new NotImplementedException();
         }

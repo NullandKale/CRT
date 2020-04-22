@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CRT.IOW;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -37,7 +38,7 @@ namespace CRT.Engine.Components
             if(goingUp)
             {
                 entity.Move(new Vec3(0, speed, 0));
-                if(entity.sphere.center.y > maxY)
+                if(((Sphere)entity.hit).center.y > maxY)
                 {
                     goingUp = false;
                 }
@@ -45,7 +46,7 @@ namespace CRT.Engine.Components
             else
             {
                 entity.Move(new Vec3(0, -speed, 0));
-                if (entity.sphere.center.y < minY)
+                if (((Sphere)entity.hit).center.y < minY)
                 {
                     goingUp = true;
                 }

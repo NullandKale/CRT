@@ -80,6 +80,16 @@ namespace CRT.IOW
             //return hitBVH(r, tMin, tMax, ref rec);
         }
 
+        public Vec3 getCenter()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void setCenter(Vec3 center)
+        {
+            throw new System.NotImplementedException();
+        }
+
         //public bool hitBVH(Ray r, double tMin, double tMax, ref HitRecord rec)
         //{
         //    return bvh_root.hit(r, tMin, tMax, ref rec);
