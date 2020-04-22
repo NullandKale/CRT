@@ -24,7 +24,7 @@ namespace CRT
 
         public static bool run = true;
         public static int tick = 0;
-        public static int frameLimit = 30;
+        public static int frameLimit = 10000;
 
         public static void Main(string[] args)
         {
@@ -116,13 +116,18 @@ namespace CRT
             saveData.stop();
         }
 
+        public static void engineCubeTestSetup()
+        {
+
+        }
+
         public static void engineTestSetup()
         {
             Entity pc = new Entity(new Vec3(0, 0, 0), 0);
             pc.AddComponent(new CameraComponent());
             worldManager.addEntity(pc);
 
-            SolarSystem.SolarSystem solarSystem = new SolarSystem.SolarSystem(8);
+            SolarSystem.SolarSystem solarSystem = new SolarSystem.SolarSystem(800);
             for (int i = 0; i < solarSystem.numPlanets; i++)
             {
                 worldManager.addEntity(solarSystem.planets[i].entity);
